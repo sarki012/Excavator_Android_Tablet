@@ -105,10 +105,14 @@ public class GameScreen extends Screen implements Input {
             } else {
                 g.drawPortraitPixmap(Assets.excavatorPortraitBackground, 0, 0);
             }
-            g.drawCircle(140, 275, 45);         //Left joystick
-            g.drawCircle(560, 275, 45);         //Right Joystick
-            g.drawCircle(290, 110, 45);         //Left Track
-            g.drawCircle(425, 110, 45);         //Right Track
+            g.drawCircle(2000, 3500, 400);         //Left joystick
+            g.drawCircle(8000, 3500, 400);         //Right Joystick
+            g.drawCircle(1400, 1000, 400);         //Left Track
+            g.drawCircle(8300, 1000, 400);         //Right Track
+            g.drawBlackLine(2000, 3500, 2500, 4000, 0);     //Left Joystick Lever
+            g.drawBlackLine(8000, 3500, 7500, 4000, 0);     //Right Joystick Lever
+            g.drawBlackLine(1000, 1000, 2500, 1200, 0);     //Left Track Lever
+            g.drawBlackLine(8000, 1100, 7500, 1200, 0);     //Right Track Lever
         }
         int len = touchEvents.size();
         //Check to see if paused
