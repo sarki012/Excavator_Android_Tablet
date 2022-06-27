@@ -202,8 +202,8 @@ public abstract class AndroidGame extends Activity implements Game {
             landscape = 1;
         else if(isLandscape == false)
             landscape = 0;
-        int frameBufferWidth = isLandscape ? 10000 : 6000;
-        int frameBufferHeight = isLandscape ? 6000 : 1000;
+        int frameBufferWidth = isLandscape ? 8000 : 5600;
+        int frameBufferHeight = isLandscape ? 5600 : 8000;
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth,
                 frameBufferHeight, Config.RGB_565);
 

@@ -90,7 +90,7 @@ public class AndroidGraphics implements Graphics {
     }
     public void drawBlackLine(int x, int y, int x2, int y2, int color) {
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(3);
+        paint.setStrokeWidth(200);
         canvas.drawLine(x, y, x2, y2, paint);
         return;
     }
@@ -120,7 +120,7 @@ public class AndroidGraphics implements Graphics {
         return;
     }
     public void drawLandscapePixmap(Pixmap pixmap, int x, int y) {
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap)pixmap).bitmap, 10000, 6000, true);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap)pixmap).bitmap, 8000, 5600, false);
         canvas.drawBitmap(resizedBitmap, x, y, null);
         return;
     }
