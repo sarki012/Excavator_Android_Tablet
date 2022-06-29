@@ -73,7 +73,7 @@ public class GameScreen extends Screen implements Input{
     public static int stopSendingOrbit = 0;
     public static int stopSendingStick = 0;
     int count = 0;
-    public Pixmap pixmap = null;
+
 
     private static final int INVALID_POINTER_ID = -1;
     // The ‘active pointer’ is the one currently moving our object.
@@ -95,7 +95,7 @@ public class GameScreen extends Screen implements Input{
     private void updateRunning(List<TouchEvent> touchEvents, float deltaTime, Context context) {
         //updateRunning() contains controller code of our MVC scheme
         Graphics g = game.getGraphics();
-        pixmap = Assets.excavatorTabletLandscapeBackground;
+        Pixmap pixmap = Assets.excavatorTabletLandscapeBackground;
         //If count == 0 it's the first time and we draw the background and the four joysticks
         if (count == 0) {
             //If landscape == 1 the phone is in landscape orientation
@@ -104,14 +104,14 @@ public class GameScreen extends Screen implements Input{
             } else {
                 g.drawPortraitPixmap(Assets.excavatorPortraitBackground, 0, 0);
             }
-            g.drawCircle(2000, 4200, 400);         //Left joystick
-            g.drawCircle(8000, 4200, 400);         //Right Joystick
-            g.drawCircle(1400, 1000, 400);         //Left Track
-            g.drawCircle(8300, 1000, 400);         //Right Track
-            g.drawBlackLine(2000, 4200, 2500, 4700, 0);     //Left Joystick Lever
-            g.drawBlackLine(8000, 4200, 7500, 4700, 0);     //Right Joystick Lever
-            g.drawBlackLine(1000, 900, 2500, 1400, 0);     //Left Track Lever
-            g.drawBlackLine(8000, 1150, 7450, 1400, 0);     //Right Track Lever
+            g.drawCircle(1500, 3300, 400);         //Left joystick
+            g.drawCircle(6500, 3300, 400);         //Right Joystick
+            g.drawCircle(1000, 800, 400);         //Left Track
+            g.drawCircle(6700, 800, 400);         //Right Track
+            g.drawBlackLine(1500, 3300, 2000, 3700, 0);     //Left Joystick Lever
+            g.drawBlackLine(6500, 3300, 6000, 3700, 0);     //Right Joystick Lever
+            g.drawBlackLine(1000, 800, 2000, 1150, 0);     //Left Track Lever
+            g.drawBlackLine(6700, 800, 5900, 1150, 0);     //Right Track Lever
         }
         int len = touchEvents.size();
         //Check to see if paused
@@ -164,26 +164,26 @@ public class GameScreen extends Screen implements Input{
                     xTouch1 = event.x;          //Get the x and y coordinates of the first touch
                     yTouch1 = event.y;
                     //In the region of the stick and spin circle
-                    if (xTouch1 < 200 & yTouch1 > 100) {
+                    if (xTouch1 < 4000 & yTouch1 > 3000) {
                         xTouchLeft = xTouch1;
                         yTouchLeft = yTouch1;
                         xPrevLeft = xTouchLeft;
                         yPrevLeft = yTouchLeft;
                     }
                     //In the region of the boom and curl circle
-                    else if (xTouch1 >= 500 & yTouch1 > 100) {
+                    else if (xTouch1 >= 4000 & yTouch1 > 3000) {
                         xTouchRight = xTouch1;
                         yTouchRight = yTouch1;
                         xPrevRight = xTouchRight;
                         yPrevRight = yTouchRight;
                     }
                     //In the region of the left track slider
-                    else if (xTouch1 > 200 & xTouch1 < 350 & yTouch1 < 210) {
+                    else if (xTouch1 < 3500 & yTouch1 <= 3000) {
                         yTrackLeft = yTouch1;
                         yTrackPrevLeft = yTrackLeft;
                     }
                     //In the region of the right track slider
-                    else if (xTouch1 >= 350 & yTouch1 < 210 & xTouch1 < 450) {
+                    else if (xTouch1 >= 3500 & yTouch1 <= 3000) {
                         yTrackRight = yTouch1;
                         yTrackPrevRight = yTrackRight;
                     }
@@ -197,26 +197,26 @@ public class GameScreen extends Screen implements Input{
                     xTouch2 = event.x;          //Get the x and y coordinates of the second touch
                     yTouch2 = event.y;
                     //In the region of the stick and spin circle
-                    if (xTouch2 < 200 & yTouch2 > 100) {
+                    if (xTouch2 < 4000 & yTouch2 > 3000) {
                         xTouchLeft = xTouch2;
                         yTouchLeft = yTouch2;
                         xPrevLeft = xTouchLeft;
                         yPrevLeft = yTouchLeft;
                     }
                     //In the region of the boom and curl circle
-                    if (xTouch2 >= 500 & yTouch2 > 100) {
+                    if (xTouch2 >= 4000 & yTouch2 > 3000) {
                         xTouchRight = xTouch2;
                         yTouchRight = yTouch2;
                         xPrevRight = xTouchRight;
                         yPrevRight = yTouchRight;
                     }
                     //In the region of the left track slider
-                    if (xTouch2 > 250 & xTouch2 < 350 & yTouch2 < 210) {
+                    if (xTouch2 < 3500 & yTouch2 <= 3000) {
                         yTrackLeft = yTouch2;
                         yTrackPrevLeft = yTrackLeft;
                     }
                     //In the region of the right track slider
-                    if (xTouch2 >= 350 & yTouch2 < 210 & xTouch2 < 400) {
+                    if (xTouch2 >= 3500 & yTouch2 <= 3000) {
                         yTrackRight = yTouch2;
                         yTrackPrevRight = yTrackRight;
                     }
@@ -227,13 +227,13 @@ public class GameScreen extends Screen implements Input{
                     numAvg = 10;
                     xR = xTouchRight - 560;
                     yR = 275 - yTouchRight;
-                    if (((int)Math.sqrt(Math.abs((xR*xR + yR*yR)))) > 85) {
+                    if (((int)Math.sqrt(Math.abs((xR*xR + yR*yR)))) > 2000) {
                         //Inverse tangent to find the angle
                         angleR = Math.atan2((double) yR, (double) xR);
                         //cos for x
-                        scaledXR = (int) (85 * Math.cos(angleR));
+                        scaledXR = (int) (2000 * Math.cos(angleR));
                         //sin for y
-                        scaledYR = (int) (85 * Math.sin(angleR));
+                        scaledYR = (int) (2000 * Math.sin(angleR));
                         //Save the previous values in case the user lifts a thumb
                         xPrevRight = 560 + scaledXR;
                         yPrevRight = 275 - scaledYR;
@@ -448,7 +448,6 @@ public class GameScreen extends Screen implements Input{
 
     @Override
     public void pause () {
-        pixmap.dispose();
     }
 
     @Override
@@ -458,7 +457,7 @@ public class GameScreen extends Screen implements Input{
 
     @Override
     public void dispose () {
-        pixmap.dispose();
+
     }
 
     @Override
