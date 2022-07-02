@@ -15,7 +15,7 @@ public class LoadingScreen extends Screen {
     public GameScreen gameScreen = new GameScreen(game);
     public void update(float deltaTime, Context context) {
         Graphics g = game.getGraphics();
-        Assets.excavatorTabletLandscapeBackground = g.newPixmap("excavatorTabletLandscapeBackground.png", PixmapFormat.ARGB4444);
+        Assets.excavatorTabletLandscapeBackground = g.newPixmap("excavatorTabletLandscapeBackground.jpg", PixmapFormat.ARGB4444);
         Assets.excavatorPortraitBackground = g.newPixmap("excavatorPortraitBackground.png", PixmapFormat.ARGB4444);
         game.setScreen(gameScreen);
     }

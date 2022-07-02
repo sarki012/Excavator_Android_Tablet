@@ -2,6 +2,7 @@ package com.esark.excavator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -12,6 +13,7 @@ import com.esark.framework.Pixmap;
 import com.esark.framework.Screen;
 import static com.esark.framework.AndroidGame.landscape;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class GameScreen extends Screen implements Input{
@@ -72,8 +74,9 @@ public class GameScreen extends Screen implements Input{
     public static int stopSendingCurl = 0;
     public static int stopSendingOrbit = 0;
     public static int stopSendingStick = 0;
+    public static int backgroundCount = 0;
     int count = 0;
-
+    public Pixmap pixmap = null;
 
     private static final int INVALID_POINTER_ID = -1;
     // The ‘active pointer’ is the one currently moving our object.
@@ -95,7 +98,8 @@ public class GameScreen extends Screen implements Input{
     private void updateRunning(List<TouchEvent> touchEvents, float deltaTime, Context context) {
         //updateRunning() contains controller code of our MVC scheme
         Graphics g = game.getGraphics();
-        Pixmap pixmap = Assets.excavatorTabletLandscapeBackground;
+        java.lang.System.gc();
+        pixmap = Assets.excavatorTabletLandscapeBackground;
         //If count == 0 it's the first time and we draw the background and the four joysticks
         if (count == 0) {
             //If landscape == 1 the phone is in landscape orientation
@@ -149,7 +153,7 @@ public class GameScreen extends Screen implements Input{
                     g.drawPortraitPixmap(Assets.excavatorPortraitBackground, 0, 0);
                 }
                 // Save the ID of this pointer
-                if (event.x > 3500 && event.x < 4500 && event.y < 1500) {
+                if (event.x > 2500 && event.x < 3500 && event.y < 1500) {
                     //Back Button Code Here
                     pixmap.dispose();
                     Intent intent2 = new Intent(context.getApplicationContext(), Excavator.class);
@@ -448,6 +452,7 @@ public class GameScreen extends Screen implements Input{
 
     @Override
     public void pause () {
+
     }
 
     @Override
