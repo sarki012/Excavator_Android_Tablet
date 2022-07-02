@@ -12,27 +12,31 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Point;
 import android.graphics.Rect;
-import static com.esark.framework.AndroidGame.width;
-import static com.esark.framework.AndroidGame.height;
 
-import com.esark.framework.AndroidPixmap;
-import com.esark.framework.AndroidGraphics;
+import static com.esark.excavator.GameScreen.backgroundCount;
 
-public class AndroidGraphics implements Graphics {
+import com.esark.excavator.LoadingScreen;
+
+public class AndroidGraphics extends AndroidGame implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
     Paint paint;
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
+    public Bitmap resizedBitmap = null;
+    public Bitmap cacheBitmap = null;
+    public static int staticCount = 0;
+   // public LruCache cache;
+
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
     }
+
     public Pixmap newPixmap(String fileName, PixmapFormat format) {
         Config config = null;
         if (format == PixmapFormat.RGB565)
@@ -74,32 +78,38 @@ public class AndroidGraphics implements Graphics {
 
         return new AndroidPixmap(bitmap, format);
     }
+
     public void clear(int color) {
         canvas.drawRGB((color & 0xff0000) >> 16, (color & 0xff00) >> 8, (color & 0xff));
         return;
     }
+
     public void drawPixel(int x, int y, int color) {
         paint.setColor(color);
         canvas.drawPoint(x, y, paint);
     }
+
     public void drawLine(int x, int y, int x2, int y2, int color) {
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(30);
         canvas.drawLine(x, y, x2, y2, paint);
         return;
     }
+
     public void drawBlackLine(int x, int y, int x2, int y2, int color) {
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(200);
         canvas.drawLine(x, y, x2, y2, paint);
         return;
     }
+
     public void drawRect(int x, int y, int width, int height, int color) {
         paint.setColor(Color.RED);
         paint.setStyle(Style.FILL);
         canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
         return;
     }
+
     public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
         srcRect.left = srcX;
         srcRect.top = srcY;
@@ -114,37 +124,68 @@ public class AndroidGraphics implements Graphics {
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, null);
         return;
     }
+
     public void drawPortraitPixmap(Pixmap pixmap, int x, int y) {
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap)pixmap).bitmap, 420, 700, false);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 420, 700, false);
         canvas.drawBitmap(resizedBitmap, x, y, null);
         return;
     }
+
     public void drawLandscapePixmap(Pixmap pixmap, int x, int y) {
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap)pixmap).bitmap, 8000, 5600, false);
-        canvas.drawBitmap(resizedBitmap, x, y, null);
-        return;
+        System.gc();
+        if (backgroundCount == 0) {
+            resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 6000, 4200, false);
+            canvas.drawBitmap(resizedBitmap, x, y, null);
+            super.addBitmapToMemoryCache("Key", resizedBitmap);
+            backgroundCount = 1;
+        } else {
+                cacheBitmap = super.getBitmapFromMemCache("Key");
+                if(cacheBitmap != null) {
+                    canvas.drawBitmap(cacheBitmap, x, y, null);
+                }
+            }
     }
-    public void drawText(String percent, int x, int y){
+    /*
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            memoryCache.put(key, bitmap);
+        }
+    }
+    public Bitmap getBitmapFromMemCache(String key) {
+        return memoryCache.get(key);
+    }
+
+     */
+
+    public void drawText(String percent, int x, int y) {
         paint.setColor(Color.WHITE);
         paint.setTextSize(75);
         canvas.drawText(percent, x, y, paint);
         return;
     }
-    public void drawSmallText(String percent, int x, int y){
+
+    public void drawSmallText(String percent, int x, int y) {
         paint.setColor(Color.BLACK);
         paint.setTextSize(20);
         canvas.drawText(percent, x, y, paint);
         return;
     }
+
     public void drawCircle(int x, int y, int radius) {
         paint.setColor(Color.BLACK);
         canvas.drawCircle(x, y, radius, paint);
     }
+
     public int getWidth() {
         return frameBuffer.getWidth();
     }
 
     public int getHeight() {
         return frameBuffer.getHeight();
+    }
+
+
+    public Screen getStartScreen() {
+        return null;
     }
 }
