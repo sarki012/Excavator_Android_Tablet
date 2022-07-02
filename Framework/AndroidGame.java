@@ -1,5 +1,7 @@
 package com.esark.framework;
 
+import static com.esark.framework.AndroidGraphics.staticCount;
+
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -19,6 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
 import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
@@ -92,11 +95,42 @@ public abstract class AndroidGame extends Activity implements Game {
     public static char startChar = 0;
     public static int width = 0;
     public static int height = 0;
-
+    public static LruCache<String, Bitmap> mMemoryCache;
+    //public int count = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+                /*
+
+    If you setup the cache in the Application class then it will never get destroyed
+    until the app shuts down. You are guaranteed that the Application class will always
+    be "alive" when ever one of your activities are.
+         */
+       // if(staticCount == 0) {
+            // Get max available VM memory, exceeding this amount will throw an
+            // OutOfMemory exception. Stored in kilobytes as LruCache takes an
+            // int in its constructor.
+            final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+            // Use 1/8th of the available memory for this memory cache.
+            final int cacheSize = maxMemory / 2;        //Was 8
+            mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+                @Override
+                protected int sizeOf(String key, Bitmap bitmap) {
+                    // The cache size will be measured in kilobytes rather than
+                    // number of items.
+                    return bitmap.getByteCount() / 1024;
+                }
+            };
+           // mMemoryCache = new LruCache(cacheSize) {
+             //   protected int sizeOf(String key, Bitmap bitmap) {
+                 //   return bitmap.getByteCount();
+               // }
+           // };
+       //     staticCount++;
+     //   }
         setContentView(R.layout.activity_main);
+
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
         // Initialize the result into a Point object
@@ -202,8 +236,8 @@ public abstract class AndroidGame extends Activity implements Game {
             landscape = 1;
         else if(isLandscape == false)
             landscape = 0;
-        int frameBufferWidth = isLandscape ? 8000 : 5600;
-        int frameBufferHeight = isLandscape ? 5600 : 8000;
+        int frameBufferWidth = isLandscape ? 6000 : 4200;
+        int frameBufferHeight = isLandscape ? 4200 : 6000;
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth,
                 frameBufferHeight, Config.RGB_565);
 
@@ -223,6 +257,7 @@ public abstract class AndroidGame extends Activity implements Game {
         audio = new AndroidAudio(this);
         input = new AndroidInput(this, renderView, scaleX, scaleY);
         screen = getStartScreen();
+
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -411,9 +446,10 @@ public abstract class AndroidGame extends Activity implements Game {
         super.onPause();
         renderView.pause();
         screen.pause();
-
-        if (isFinishing())
-            screen.dispose();
+        System.gc();
+        screen.dispose();
+       // if (isFinishing())
+         //   screen.dispose();
     }
     public Input getInput() {
         return input;
@@ -442,5 +478,15 @@ public abstract class AndroidGame extends Activity implements Game {
     }
     public Screen getCurrentScreen() {
         return screen;
+    }
+
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        return (Bitmap) mMemoryCache.get(key);
     }
 }
