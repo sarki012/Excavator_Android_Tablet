@@ -34,6 +34,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.esark.excavator.GetLruCache;
 import com.esark.excavator.R;
 import com.esark.excavator.Excavator;
 import com.esark.excavator.ConnectedThread;
@@ -95,17 +96,20 @@ public abstract class AndroidGame extends Activity implements Game {
     public static char startChar = 0;
     public static int width = 0;
     public static int height = 0;
-    public static LruCache<String, Bitmap> mMemoryCache;
+
+   // private LruCache<String, Bitmap> mMemoryCache;
     //public int count = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
                 /*
 
     If you setup the cache in the Application class then it will never get destroyed
     until the app shuts down. You are guaranteed that the Application class will always
     be "alive" when ever one of your activities are.
          */
+        /*
         if(staticCount == 0) {
             // Get max available VM memory, exceeding this amount will throw an
             // OutOfMemory exception. Stored in kilobytes as LruCache takes an
@@ -129,6 +133,8 @@ public abstract class AndroidGame extends Activity implements Game {
            // };
             staticCount++;
         }
+
+         */
         setContentView(R.layout.activity_main);
 
         // Get the pixel dimensions of the screen
@@ -236,8 +242,8 @@ public abstract class AndroidGame extends Activity implements Game {
             landscape = 1;
         else if(isLandscape == false)
             landscape = 0;
-        int frameBufferWidth = isLandscape ? 6000 : 4200;
-        int frameBufferHeight = isLandscape ? 4200 : 6000;
+        int frameBufferWidth = isLandscape ? 5000 : 3500;
+        int frameBufferHeight = isLandscape ? 3500 : 5000;
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth,
                 frameBufferHeight, Config.RGB_565);
 
@@ -447,9 +453,9 @@ public abstract class AndroidGame extends Activity implements Game {
         renderView.pause();
         screen.pause();
         System.gc();
-        screen.dispose();
-       // if (isFinishing())
-         //   screen.dispose();
+        //screen.dispose();
+        if (isFinishing())
+            screen.dispose();
     }
     public Input getInput() {
         return input;
@@ -480,13 +486,5 @@ public abstract class AndroidGame extends Activity implements Game {
         return screen;
     }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
-        }
-    }
 
-    public Bitmap getBitmapFromMemCache(String key) {
-        return (Bitmap) mMemoryCache.get(key);
-    }
 }
