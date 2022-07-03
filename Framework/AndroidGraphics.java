@@ -15,12 +15,10 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 
 import static com.esark.excavator.GameScreen.backgroundCount;
-import static com.esark.framework.AndroidGame.addBitmapToMemoryCache;
-import static com.esark.framework.AndroidGame.getBitmapFromMemCache;
 
 import com.esark.excavator.LoadingScreen;
 
-public class AndroidGraphics implements Graphics {
+public class AndroidGraphics extends AndroidGame implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
@@ -134,17 +132,19 @@ public class AndroidGraphics implements Graphics {
     }
 
     public void drawLandscapePixmap(Pixmap pixmap, int x, int y) {
-       // System.gc();
+        System.gc();
         if (backgroundCount == 0) {
             resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 6000, 4200, false);
             canvas.drawBitmap(resizedBitmap, x, y, null);
-            addBitmapToMemoryCache("Key", resizedBitmap);
+            super.addBitmapToMemoryCache("Key", resizedBitmap);
             backgroundCount = 1;
+       //     resizedBitmap.recycle();
         } else {
-                cacheBitmap = getBitmapFromMemCache("Key");
-                if(cacheBitmap != null) {
-                    canvas.drawBitmap(cacheBitmap, x, y, null);
-                }
+                //cacheBitmap = super.getBitmapFromMemCache("Key");
+             //   if(cacheBitmap != null) {
+            cacheBitmap = super.getBitmapFromMemCache("Key");
+                canvas.drawBitmap(cacheBitmap, x, y, null);
+               // }
             }
         return;
     }
@@ -187,10 +187,9 @@ public class AndroidGraphics implements Graphics {
         return frameBuffer.getHeight();
     }
 
-/*
+
     public Screen getStartScreen() {
         return null;
     }
-    */
 
 }
