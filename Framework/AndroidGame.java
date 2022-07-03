@@ -106,14 +106,14 @@ public abstract class AndroidGame extends Activity implements Game {
     until the app shuts down. You are guaranteed that the Application class will always
     be "alive" when ever one of your activities are.
          */
-       // if(staticCount == 0) {
+        if(staticCount == 0) {
             // Get max available VM memory, exceeding this amount will throw an
             // OutOfMemory exception. Stored in kilobytes as LruCache takes an
             // int in its constructor.
             final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
             // Use 1/8th of the available memory for this memory cache.
-            final int cacheSize = maxMemory / 2;        //Was 8
+            final int cacheSize = maxMemory / 4;        //Was 8
             mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
                 @Override
                 protected int sizeOf(String key, Bitmap bitmap) {
@@ -127,8 +127,8 @@ public abstract class AndroidGame extends Activity implements Game {
                  //   return bitmap.getByteCount();
                // }
            // };
-       //     staticCount++;
-     //   }
+            staticCount++;
+        }
         setContentView(R.layout.activity_main);
 
         // Get the pixel dimensions of the screen
@@ -480,13 +480,13 @@ public abstract class AndroidGame extends Activity implements Game {
         return screen;
     }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+    public static void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap getBitmapFromMemCache(String key) {
+    public static Bitmap getBitmapFromMemCache(String key) {
         return (Bitmap) mMemoryCache.get(key);
     }
 }
