@@ -13,9 +13,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.util.LruCache;
 
 import static com.esark.excavator.GameScreen.backgroundCount;
 
+import com.esark.excavator.GetLruCache;
 import com.esark.excavator.LoadingScreen;
 
 public class AndroidGraphics extends AndroidGame implements Graphics {
@@ -26,9 +28,11 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
     public Bitmap resizedBitmap = null;
-    public Bitmap cacheBitmap = null;
+    private Bitmap cacheBitmap = null;
     public static int staticCount = 0;
    // public LruCache cache;
+  //  private LruCache<String, Bitmap> mMemoryCache;
+   public GetLruCache mMemoryCache = null;
 
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
@@ -132,21 +136,26 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     }
 
     public void drawLandscapePixmap(Pixmap pixmap, int x, int y) {
-        System.gc();
+      //  System.gc();
+        mMemoryCache = GetLruCache.get();
         if (backgroundCount == 0) {
-            resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 6000, 4200, false);
+            resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 5000, 3500, false);
             canvas.drawBitmap(resizedBitmap, x, y, null);
-            super.addBitmapToMemoryCache("Key", resizedBitmap);
+            addBitmapToMemoryCache("Key", resizedBitmap);
             backgroundCount = 1;
-       //     resizedBitmap.recycle();
-        } else {
-                //cacheBitmap = super.getBitmapFromMemCache("Key");
-             //   if(cacheBitmap != null) {
-            cacheBitmap = super.getBitmapFromMemCache("Key");
-                canvas.drawBitmap(cacheBitmap, x, y, null);
-               // }
-            }
+        }
+        cacheBitmap = getBitmapFromMemCache("Key");
+        canvas.drawBitmap(cacheBitmap, x, y, null);
         return;
+    }
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        return (Bitmap) mMemoryCache.get(key);
     }
     /*
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
