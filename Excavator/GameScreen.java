@@ -153,7 +153,7 @@ public class GameScreen extends Screen implements Input{
                     g.drawPortraitPixmap(Assets.excavatorPortraitBackground, 0, 0);
                 }
                 // Save the ID of this pointer
-                if (event.x > 2500 && event.x < 3500 && event.y < 1500) {
+                if (event.x > 2000 && event.x < 3000 && event.y < 1500) {
                     //Back Button Code Here
                     pixmap.dispose();
                     Intent intent2 = new Intent(context.getApplicationContext(), Excavator.class);
@@ -462,7 +462,6 @@ public class GameScreen extends Screen implements Input{
 
     @Override
     public void dispose () {
-
     }
 
     @Override
