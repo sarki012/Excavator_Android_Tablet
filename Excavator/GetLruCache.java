@@ -19,7 +19,7 @@ public final class GetLruCache extends LruCache<String, Bitmap> {
             final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
             // Use 1/8th of the available memory for this memory cache.
-            final int cacheSize = maxMemory / 2;        //Was 8
+            final int cacheSize = maxMemory / 7;        //Was 8
 
             instance = new GetLruCache(cacheSize);
         }

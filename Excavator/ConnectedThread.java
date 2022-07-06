@@ -82,7 +82,7 @@ public class ConnectedThread extends Thread {
 
             if(stopSendingRight == 1){
                 write("*");
-                SystemClock.sleep(10);
+      //          SystemClock.sleep(10);
             }
             else if(stopSendingRight == 0) {
                 /////////////////Bucket Curl//////////////////////
@@ -93,7 +93,7 @@ public class ConnectedThread extends Thread {
                     write(returnArray[1]);          //d1 (Left digit)
                     write(returnArray[0]);          //d2 (Right Digit)
                 }
-                SystemClock.sleep(10);
+        //        SystemClock.sleep(10);
                 ////////////////Boom//////////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(b);
                 if (stopSendingBoom == 0) {          //Send an integer and get three chars in the returnArray as a return value
@@ -102,12 +102,12 @@ public class ConnectedThread extends Thread {
                     write(returnArray[1]);          //d1 (Left digit)
                     write(returnArray[0]);          //d2 (Right Digit)
                 }
-                SystemClock.sleep(10);
+          //      SystemClock.sleep(10);
             }
 
             if(stopSendingLeft == 1){
                 write("#");
-                SystemClock.sleep(10);
+            //    SystemClock.sleep(10);
             }
             ///////////Rotate//////////////////////////
             returnArray = mIntToChars.IntToCharsMethod(o);      //Send an integer and get three chars in the returnArray as a return value
@@ -117,7 +117,7 @@ public class ConnectedThread extends Thread {
             write(returnArray[0]);          //d2 (Right Digit)
 
             if(stopSendingLeft == 0){
-                SystemClock.sleep(10);
+              //  SystemClock.sleep(10);
                 ////////////////Boom//////////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(s);
                 if(stopSendingStick == 0) {          //Send an integer and get three chars in the returnArray as a return value
@@ -126,20 +126,20 @@ public class ConnectedThread extends Thread {
                     write(returnArray[1]);          //d1 (Left digit)
                     write(returnArray[0]);          //d2 (Right Digit)
                 }
-                SystemClock.sleep(10);
+                //SystemClock.sleep(10);
             }
             returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
             write("l");               //s for stick. Number of pixels in the y-direction
             write(returnArray[2]);          //d2 (+/-)
             write(returnArray[1]);          //d1 (Left digit)
             write(returnArray[0]);          //d2 (Right Digit)
-            SystemClock.sleep(10);
+            //SystemClock.sleep(10);
             returnArray = mIntToChars.IntToCharsMethod(r);      //Send an integer and get three chars in the returnArray as a return value
             write("r");               //s for stick. Number of pixels in the y-direction
             write(returnArray[2]);          //d2 (+/-)
             write(returnArray[1]);          //d1 (Left digit)
             write(returnArray[0]);          //d2 (Right Digit)
-            SystemClock.sleep(10);
+            //SystemClock.sleep(10);
         }
     }
 
