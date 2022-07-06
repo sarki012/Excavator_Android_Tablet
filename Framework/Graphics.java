@@ -18,8 +18,9 @@ public interface Graphics {
 
     public void drawRect(int x, int y, int width, int height, int color);
 
-    public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY,
-                           int srcWidth, int srcHeight);
+  //  public void drawPixmap(Pixmap pixmap, int x, int y);
+
+    public void drawJoystick(Pixmap pixmap, int x, int y);
 
     public void drawPortraitPixmap(Pixmap pixmap, int x, int y);
 
