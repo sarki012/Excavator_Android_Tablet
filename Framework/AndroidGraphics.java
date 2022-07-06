@@ -16,6 +16,7 @@ import android.graphics.Rect;
 import android.util.LruCache;
 
 import static com.esark.excavator.GameScreen.backgroundCount;
+import static com.esark.excavator.GameScreen.joystickCount;
 
 import com.esark.excavator.GetLruCache;
 import com.esark.excavator.LoadingScreen;
@@ -28,11 +29,12 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
     public Bitmap resizedBitmap = null;
-    private Bitmap cacheBitmap = null;
+    public Bitmap joystickBitmap = null;
+ //   private Bitmap cacheBitmap = null;
     public static int staticCount = 0;
    // public LruCache cache;
   //  private LruCache<String, Bitmap> mMemoryCache;
-   public GetLruCache mMemoryCache = null;
+    public GetLruCache mMemoryCache = null;
 
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
@@ -102,7 +104,7 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
 
     public void drawBlackLine(int x, int y, int x2, int y2, int color) {
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(200);
+        paint.setStrokeWidth(80);
         canvas.drawLine(x, y, x2, y2, paint);
         return;
     }
@@ -113,7 +115,7 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
         canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
         return;
     }
-
+/*
     public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
         srcRect.left = srcX;
         srcRect.top = srcY;
@@ -128,7 +130,18 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, null);
         return;
     }
-
+*/
+    public void drawJoystick(Pixmap pixmap, int x, int y) {
+        mMemoryCache = GetLruCache.get();
+        if (joystickCount == 0) {
+            joystickBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 750, 750, false);
+            canvas.drawBitmap(joystickBitmap, x, y, null);
+            addBitmapToMemoryCache("joystickKey", joystickBitmap);
+            joystickCount = 1;
+        }
+        canvas.drawBitmap(getBitmapFromMemCache("joystickKey"), x, y, null);
+        return;
+    }
     public void drawPortraitPixmap(Pixmap pixmap, int x, int y) {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 420, 700, false);
         canvas.drawBitmap(resizedBitmap, x, y, null);
@@ -136,7 +149,7 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     }
 
     public void drawLandscapePixmap(Pixmap pixmap, int x, int y) {
-      //  System.gc();
+       // System.gc();
         mMemoryCache = GetLruCache.get();
         if (backgroundCount == 0) {
             resizedBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 5000, 3500, false);
@@ -144,8 +157,8 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
             addBitmapToMemoryCache("Key", resizedBitmap);
             backgroundCount = 1;
         }
-        cacheBitmap = getBitmapFromMemCache("Key");
-        canvas.drawBitmap(cacheBitmap, x, y, null);
+        //cacheBitmap = getBitmapFromMemCache("Key");
+        canvas.drawBitmap(getBitmapFromMemCache("Key"), x, y, null);
         return;
     }
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
@@ -184,7 +197,7 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     }
 
     public void drawCircle(int x, int y, int radius) {
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.WHITE);
         canvas.drawCircle(x, y, radius, paint);
     }
 

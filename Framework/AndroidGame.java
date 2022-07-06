@@ -452,7 +452,7 @@ public abstract class AndroidGame extends Activity implements Game {
         super.onPause();
         renderView.pause();
         screen.pause();
-        System.gc();
+   //     System.gc();
         //screen.dispose();
         if (isFinishing())
             screen.dispose();
