@@ -80,19 +80,20 @@ public class GameScreen extends Screen implements Input{
     public int bottomRightFlag = 0;
     public int leftTrackFlag = 0;
     public int rightTrackFlag = 0;
-    int xTouchBottomLeft = 850;
-    int yTouchBottomLeft = 1950;
-    int xTouchBottomRight = 3400;
-    int yTouchBottomRight = 1950;
-    int xPrevBottomLeft = 850;        //Adjust these/////////////////////////
-    int yPrevBottomLeft = 1950;
-    int xPrevBottomRight = 3400;
-    int yPrevBottomRight = 1950;
-    int yTrackLeft = 300;
-    int yTrackPrevLeft = 300;
-    int yTrackRight = 300;
-    int yTrackPrevRight = 300;
-    int touchUpCount = 0;
+    public int xTouchBottomLeft = 850;
+    public int yTouchBottomLeft = 1950;
+    public int xTouchBottomRight = 3400;
+    public int yTouchBottomRight = 1950;
+    public int xPrevBottomLeft = 850;        //Adjust these/////////////////////////
+    public int yPrevBottomLeft = 1950;
+    public int xPrevBottomRight = 3400;
+    public int yPrevBottomRight = 1950;
+    public int yTrackLeft = 300;
+    public int yTrackPrevLeft = 300;
+    public int yTrackRight = 300;
+    public int yTrackPrevRight = 300;
+    public int touchUpCount = 0;
+    public int renderCount = 0;
 
 
     private static final int INVALID_POINTER_ID = -1;
@@ -169,7 +170,7 @@ public class GameScreen extends Screen implements Input{
                 count = 1;
                 xTouch1 = event.x;          //Get the x and y coordinates of the first touch
                 yTouch1 = event.y;
-                g.drawJoystick(redJoystick, xTouch1, yTouch1);
+
 
 
 
@@ -250,8 +251,21 @@ public class GameScreen extends Screen implements Input{
                                 break;
                     }
                 }
-
             }
+            switch (renderCount){
+                case 1: g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+                        break;
+                case 4: g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+                        break;
+                case 7: g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                        break;
+                case 10: g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                        renderCount = 0;
+                        break;
+            }
+            renderCount++;
+
+
 
 
             /*
