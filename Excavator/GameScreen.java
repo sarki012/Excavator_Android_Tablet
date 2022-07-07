@@ -96,6 +96,8 @@ public class GameScreen extends Screen implements Input{
     public int touchUpCount = 0;
     public int renderCount = 1;
     public int innerCount = 0;
+    public int leftThumbOutOfCircle = 0;
+    public int rightThumbOutOfCircle = 0;
 
 
     private static final int INVALID_POINTER_ID = -1;
@@ -277,12 +279,53 @@ public class GameScreen extends Screen implements Input{
                     }
                 }
             }
-            if(renderCount == 10){
+            numAvg = 10;
+            xL = xTouchBottomLeft - 1225;
+            yL = 2325 - yTouchBottomLeft;
+            if (((int)Math.sqrt(Math.abs((xL*xL + yL*yL)))) > 570) {
+                //Inverse tangent to find the angle
+                angleL = Math.atan2((double) yL, (double) xL);
+                //cos for x
+                scaledXL = (int) (570 * Math.cos(angleL));
+                //sin for y
+                scaledYL = (int) (570 * Math.sin(angleL));
+                //Save the previous values in case the user lifts a thumb
+                xPrevBottomLeft = 850 + scaledXL;
+                yPrevBottomLeft = 1950 - scaledYL;
+                leftThumbOutOfCircle = 1;
+
+            } else if(((int)Math.sqrt(Math.abs((xL*xL + yL*yL)))) <= 570) {
+                //The thumb is within the circle. Draw the joystick at the thumb press
+                leftThumbOutOfCircle = 0;
+            }
+
+            if(renderCount == 5){
                 if(touchUpCount == 0){
                     g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
                 }
-                g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
-                g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+                if(leftThumbOutOfCircle == 0) {
+                    g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+
+                }
+                else if(leftThumbOutOfCircle == 1) {
+                    g.drawJoystick(redJoystick, 850 + scaledXL, 1950  - scaledYL);
+                }
+                g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                /*
+                if(rightThumbOutOfCircle == 0) {
+                    g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+                    g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+
+                }
+                else if(rightThumbOutOfCircle == 1) {
+                    g.drawJoystick(redJoystick, 475 + scaledXL, 1575  - scaledYL);
+                    g.drawJoystick(redJoystick, 3025 + scaledXR, 1575 - scaledYR);
+                    g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                    g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                }
+
+                 */
                 g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
                 g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
                 renderCount = 0;
