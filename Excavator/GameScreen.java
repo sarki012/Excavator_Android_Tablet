@@ -15,6 +15,7 @@ import com.esark.framework.MultiTouchHandler;
 import com.esark.framework.Pixmap;
 import com.esark.framework.Screen;
 
+import static com.esark.excavator.Assets.excavatorTabletLandscapeBackground;
 import static com.esark.excavator.Assets.redJoystick;
 import static com.esark.framework.AndroidGame.landscape;
 
@@ -93,7 +94,8 @@ public class GameScreen extends Screen implements Input{
     public int yTrackRight = 300;
     public int yTrackPrevRight = 300;
     public int touchUpCount = 0;
-    public int renderCount = 0;
+    public int renderCount = 1;
+    public int innerCount = 0;
 
 
     private static final int INVALID_POINTER_ID = -1;
@@ -117,13 +119,11 @@ public class GameScreen extends Screen implements Input{
         //updateRunning() contains controller code of our MVC scheme
         Graphics g = game.getGraphics();
         backgroundPixmap = Assets.excavatorTabletLandscapeBackground;
-        if(touchUpCount == 0) {
-            g.drawLandscapePixmap(backgroundPixmap, 0, 0);
-        }
         if (count == 0) {
+            g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
             g.drawJoystick(redJoystick, 850, 1950);          //Bottom Left Joystick
             g.drawJoystick(redJoystick, 3400, 1950);           //Bottom Right joystick
-            g.drawJoystick(redJoystick,410, 300);              //Left track
+            g.drawJoystick(redJoystick, 410, 300);              //Left track
             g.drawJoystick(redJoystick, 3750, 300);             //Right track
         }
         int len = touchEvents.size();
@@ -134,44 +134,53 @@ public class GameScreen extends Screen implements Input{
             //The pointer points to which finger or thumb. The first finger to touch is 0
             Log.d("ADebugTag", "mActivePointerId: " + mActivePointerId);
             if (event.type == TouchEvent.TOUCH_UP) {
-               // g.drawJoystick(redJoystick, xPrevBottomLeft, yPrevBottomLeft);          //Bottom Left Joystick
-                //g.drawJoystick(redJoystick, xPrevBottomRight, yPrevBottomRight);           //Bottom Right joystick
-                //g.drawJoystick(redJoystick,410, yTrackPrevLeft);              //Left track
-                //g.drawJoystick(redJoystick, 3750, yTrackPrevRight);             //Right track
+                //  g.drawLandscapePixmap(backgroundPixmap, 0, 0);
+/*
+                g.drawJoystick(redJoystick, xPrevBottomLeft - 375, yPrevBottomLeft - 375);          //Bottom Left Joystick
+                g.drawJoystick(redJoystick, xPrevBottomRight - 375, yPrevBottomRight - 375);           //Bottom Right joystick
+                g.drawJoystick(redJoystick, 410, yTrackPrevLeft - 375);              //Left track
+                g.drawJoystick(redJoystick, 3750, yTrackPrevRight - 375);             //Right track
                 touchUpCount = 1;
-                if(mActivePointerId == bottomLeftPtr) {
+
+ */
+                touchUpCount = 1;
+            }
+                /*
+                if (mActivePointerId == bottomLeftPtr) {
                     bottomLeftFlag = 0;
                 }
-                if(mActivePointerId == bottomRightPtr){
+                if (mActivePointerId == bottomRightPtr) {
                     bottomRightFlag = 0;
                 }
-                if(mActivePointerId == leftTrackPtr){
+                if (mActivePointerId == leftTrackPtr) {
                     leftTrackFlag = 0;
                 }
-                if(mActivePointerId == rightTrackPtr){
+                if (mActivePointerId == rightTrackPtr) {
                     rightTrackFlag = 0;
                 }
-                g.drawLandscapePixmap(backgroundPixmap, 0, 0);
+
             }
-            if(bottomLeftFlag == 0) {
+            if (bottomLeftFlag == 0) {
                 g.drawJoystick(redJoystick, xPrevBottomLeft - 375, yPrevBottomLeft - 375);
             }
-            if(bottomRightFlag == 0) {
+            if (bottomRightFlag == 0) {
                 g.drawJoystick(redJoystick, xPrevBottomRight - 375, yPrevBottomRight - 375);
             }
-            if(leftTrackFlag == 0) {
+            if (leftTrackFlag == 0) {
                 g.drawJoystick(redJoystick, 410, yTrackPrevLeft - 375);
             }
-            if(rightTrackFlag == 0) {
+            if (rightTrackFlag == 0) {
                 g.drawJoystick(redJoystick, 3750, yTrackPrevRight - 375);
             }
+*/
+
+
+
             if (event.type == TouchEvent.TOUCH_DRAGGED || event.type == TouchEvent.TOUCH_DOWN) {
                 touchUpCount = 0;
                 count = 1;
                 xTouch1 = event.x;          //Get the x and y coordinates of the first touch
                 yTouch1 = event.y;
-
-
 
 
                 if (event.x > 2000 && event.x < 3000 && event.y < 1500) {
@@ -190,15 +199,19 @@ public class GameScreen extends Screen implements Input{
                     xPrevBottomLeft = xTouchBottomLeft;
                     yPrevBottomLeft = yTouchBottomLeft;
                     bottomLeftFlag = 1;
-                    switch (mActivePointerId){
-                        case 0: bottomLeftPtr = 0;
-                                break;
-                        case 1: bottomLeftPtr = 1;
-                                break;
-                        case 2: bottomLeftPtr = 2;
-                                break;
-                        case 3: bottomLeftPtr = 3;
-                                break;
+                    switch (mActivePointerId) {
+                        case 0:
+                            bottomLeftPtr = 0;
+                            break;
+                        case 1:
+                            bottomLeftPtr = 1;
+                            break;
+                        case 2:
+                            bottomLeftPtr = 2;
+                            break;
+                        case 3:
+                            bottomLeftPtr = 3;
+                            break;
                     }
                 }
                 //In the region of the boom and curl circle
@@ -208,15 +221,19 @@ public class GameScreen extends Screen implements Input{
                     xPrevBottomRight = xTouchBottomRight;
                     yPrevBottomRight = yTouchBottomRight;
                     bottomRightFlag = 1;
-                    switch (mActivePointerId){
-                        case 0: bottomRightPtr = 0;
-                                break;
-                        case 1: bottomRightPtr = 1;
-                                break;
-                        case 2: bottomRightPtr = 2;
-                                break;
-                        case 3: bottomRightPtr = 3;
-                                break;
+                    switch (mActivePointerId) {
+                        case 0:
+                            bottomRightPtr = 0;
+                            break;
+                        case 1:
+                            bottomRightPtr = 1;
+                            break;
+                        case 2:
+                            bottomRightPtr = 2;
+                            break;
+                        case 3:
+                            bottomRightPtr = 3;
+                            break;
                     }
                 }
                 //In the region of the left track slider
@@ -224,15 +241,19 @@ public class GameScreen extends Screen implements Input{
                     yTrackLeft = yTouch1;
                     yTrackPrevLeft = yTrackLeft;
                     leftTrackFlag = 1;
-                    switch (mActivePointerId){
-                        case 0: leftTrackPtr = 0;
-                                break;
-                        case 1: leftTrackPtr = 1;
-                                break;
-                        case 2: leftTrackPtr = 2;
-                                break;
-                        case 3: leftTrackPtr = 3;
-                             break;
+                    switch (mActivePointerId) {
+                        case 0:
+                            leftTrackPtr = 0;
+                            break;
+                        case 1:
+                            leftTrackPtr = 1;
+                            break;
+                        case 2:
+                            leftTrackPtr = 2;
+                            break;
+                        case 3:
+                            leftTrackPtr = 3;
+                            break;
                     }
                 }
                 //In the region of the right track slider
@@ -240,33 +261,77 @@ public class GameScreen extends Screen implements Input{
                     yTrackRight = yTouch1;
                     yTrackPrevRight = yTrackRight;
                     rightTrackFlag = 1;
-                    switch (mActivePointerId){
-                        case 0: rightTrackPtr = 0;
-                                break;
-                        case 1: rightTrackPtr = 1;
-                                break;
-                        case 2: rightTrackPtr = 2;
-                                break;
-                        case 3: rightTrackPtr = 3;
-                                break;
+                    switch (mActivePointerId) {
+                        case 0:
+                            rightTrackPtr = 0;
+                            break;
+                        case 1:
+                            rightTrackPtr = 1;
+                            break;
+                        case 2:
+                            rightTrackPtr = 2;
+                            break;
+                        case 3:
+                            rightTrackPtr = 3;
+                            break;
                     }
                 }
             }
+            if(renderCount == 10){
+                if(touchUpCount == 0){
+                    g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
+                }
+                g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+                g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+                g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                renderCount = 0;
+            }
+            renderCount++;
+            /*
             switch (renderCount){
-                case 1: g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
-                        break;
-                case 4: g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
-                        break;
-                case 7: g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
-                        break;
-                case 10: g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
-                        renderCount = 0;
-                        break;
+                case 1: g.drawJoystick(redJoystick, xPrevBottomLeft - 375, yPrevBottomLeft - 375);
+                    break;
+                case 2: g.drawJoystick(redJoystick, xPrevBottomRight - 375, yPrevBottomRight - 375);
+                    break;
+                case 3: g.drawJoystick(redJoystick, 410, yTrackPrevLeft - 375);
+                    break;
+                case 4: g.drawJoystick(redJoystick, 3750, yTrackPrevRight - 375);
+                    renderCount = 0;
+                    break;
+            }
+
+
+             */
+            /*
+            switch (renderCount) {
+                case 1:
+                    if(touchUpCount == 0 & innerCount == 10){
+                        g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
+                        innerCount = 0;
+                    }
+                    innerCount++;
+                    break;
+                case 2:
+                    g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+                    break;
+                case 3:
+                    g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+                    break;
+                case 4:
+                    g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                    break;
+                case 5:
+                    g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                    renderCount = 0;
+                    break;
             }
             renderCount++;
 
+             */
+        }
 
-
+    }
 
             /*
         pixmap = Assets.excavatorTabletLandscapeBackground;
@@ -409,8 +474,7 @@ public class GameScreen extends Screen implements Input{
             }
 
              */
-        }
-    }
+
     @Override
     public void present ( float deltaTime){
         Graphics g = game.getGraphics();
