@@ -81,17 +81,17 @@ public class GameScreen extends Screen implements Input{
     public int bottomRightFlag = 0;
     public int leftTrackFlag = 0;
     public int rightTrackFlag = 0;
-    public int xTouchBottomLeft = 850;
-    public int yTouchBottomLeft = 1950;
-    public int xTouchBottomRight = 3400;
-    public int yTouchBottomRight = 1950;
+    public int xTouchBottomLeft = 1225;
+    public int yTouchBottomLeft = 2325;
+    public int xTouchBottomRight = 3775;
+    public int yTouchBottomRight = 2325;
     public int xPrevBottomLeft = 850;        //Adjust these/////////////////////////
     public int yPrevBottomLeft = 1950;
     public int xPrevBottomRight = 3400;
     public int yPrevBottomRight = 1950;
-    public int yTrackLeft = 300;
+    public int yTrackLeft = 675;
     public int yTrackPrevLeft = 300;
-    public int yTrackRight = 300;
+    public int yTrackRight = 675;
     public int yTrackPrevRight = 300;
     public int touchUpCount = 0;
     public int renderCount = 1;
@@ -289,234 +289,67 @@ public class GameScreen extends Screen implements Input{
                 scaledXL = (int) (570 * Math.cos(angleL));
                 //sin for y
                 scaledYL = (int) (570 * Math.sin(angleL));
-                //Save the previous values in case the user lifts a thumb
-                xPrevBottomLeft = 850 + scaledXL;
-                yPrevBottomLeft = 1950 - scaledYL;
                 leftThumbOutOfCircle = 1;
 
             } else if(((int)Math.sqrt(Math.abs((xL*xL + yL*yL)))) <= 570) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 leftThumbOutOfCircle = 0;
             }
+            xR = xTouchBottomRight - 3775;
+            yR = 2325 - yTouchBottomRight;
+            if (((int)Math.sqrt(Math.abs((xR*xR + yR*yR)))) > 570) {
+                //Inverse tangent to find the angle
+                angleR = Math.atan2((double) yR, (double) xR);
+                //cos for x
+                scaledXR = (int) (570 * Math.cos(angleR));
+                //sin for y
+                scaledYR = (int) (570 * Math.sin(angleR));
+                rightThumbOutOfCircle = 1;
+            } else if((((int)Math.sqrt(Math.abs((xR*xR + yR*yR))) <= 85))) {
+                //The thumb is within the circle. Draw the joystick at the thumb press
+                rightThumbOutOfCircle = 0;
 
-            if(renderCount == 5){
-                if(touchUpCount == 0){
+            }
+
+            if(renderCount == 10) {
+                if (touchUpCount == 0) {
                     g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
                 }
-                if(leftThumbOutOfCircle == 0) {
+                if (leftThumbOutOfCircle == 0) {
                     g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
 
+                } else if (leftThumbOutOfCircle == 1) {
+                    g.drawJoystick(redJoystick, 850 + scaledXL, 1950 - scaledYL);
                 }
-                else if(leftThumbOutOfCircle == 1) {
-                    g.drawJoystick(redJoystick, 850 + scaledXL, 1950  - scaledYL);
-                }
-                g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
-                g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
-                /*
-                if(rightThumbOutOfCircle == 0) {
-                    g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+                if (rightThumbOutOfCircle == 0) {
                     g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
 
+                } else if (rightThumbOutOfCircle == 1) {
+                    g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
                 }
-                else if(rightThumbOutOfCircle == 1) {
-                    g.drawJoystick(redJoystick, 475 + scaledXL, 1575  - scaledYL);
-                    g.drawJoystick(redJoystick, 3025 + scaledXR, 1575 - scaledYR);
+                if(yTrackLeft > 400 & yTrackLeft < 875) {
                     g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                }
+                else if(yTrackLeft <= 400){
+                    g.drawJoystick(redJoystick, 410, 25);
+                }
+                else if(yTrackLeft >= 875){
+                    g.drawJoystick(redJoystick, 410, 500);
+                }
+                if(yTrackRight > 400 & yTrackRight < 875) {
                     g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
                 }
-
-                 */
-                g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
-                g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                else if(yTrackRight <= 400){
+                    g.drawJoystick(redJoystick, 3750, 25);
+                }
+                else if(yTrackRight >= 875) {
+                    g.drawJoystick(redJoystick, 3750, 500);
+                }
                 renderCount = 0;
             }
             renderCount++;
-            /*
-            switch (renderCount){
-                case 1: g.drawJoystick(redJoystick, xPrevBottomLeft - 375, yPrevBottomLeft - 375);
-                    break;
-                case 2: g.drawJoystick(redJoystick, xPrevBottomRight - 375, yPrevBottomRight - 375);
-                    break;
-                case 3: g.drawJoystick(redJoystick, 410, yTrackPrevLeft - 375);
-                    break;
-                case 4: g.drawJoystick(redJoystick, 3750, yTrackPrevRight - 375);
-                    renderCount = 0;
-                    break;
-            }
-
-
-             */
-            /*
-            switch (renderCount) {
-                case 1:
-                    if(touchUpCount == 0 & innerCount == 10){
-                        g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
-                        innerCount = 0;
-                    }
-                    innerCount++;
-                    break;
-                case 2:
-                    g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
-                    break;
-                case 3:
-                    g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
-                    break;
-                case 4:
-                    g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
-                    break;
-                case 5:
-                    g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
-                    renderCount = 0;
-                    break;
-            }
-            renderCount++;
-
-             */
         }
-
     }
-
-            /*
-        pixmap = Assets.excavatorTabletLandscapeBackground;
-        //If count == 0 it's the first time and we draw the background and the four joysticks
-        if (count == 0) {
-            //If landscape == 1 the phone is in landscape orientation
-            if (landscape == 1) {
-                g.drawLandscapePixmap(pixmap, 0, 0);
-            } else {
-                g.drawPortraitPixmap(Assets.excavatorPortraitBackground, 0, 0);
-            }
-            g.drawJoystick(redJoystick, 850, 1950);          //Bottom Left Joystick
-            g.drawJoystick(redJoystick, 3400, 1950);           //Bottom Right joystick
-            g.drawJoystick(redJoystick,410, 300);              //Left track
-            g.drawJoystick(redJoystick, 3750, 300);             //Right track
-
-        }
-     //   MultiTouchHandler myMultiTouch = new MultiTouchHandler(View view, 5000, 3500)
-        int len = touchEvents.size();
-        //Check to see if paused
-        for (int i = 0; i < len; i++) {
-            TouchEvent event = touchEvents.get(i);
-            if (event.type == TouchEvent.TOUCH_UP) {
-
-                if(event.x < 2500 & event.y > 1300) {
-                    stopSendingLeft = 1;
-                }
-                else if(event.x >= 350 & event.y > 1300){
-                    stopSendingRight = 1;
-                }
-                g.drawJoystick(redJoystick, xPrevLeft, yPrevLeft);          //Bottom Left Joystick
-                g.drawJoystick(redJoystick, xPrevRight, yPrevRight);           //Bottom Right joystick
-                g.drawJoystick(redJoystick,410, yTrackPrevLeft);              //Left track
-                g.drawJoystick(redJoystick, 3750, yTrackPrevRight);             //Right track
-
-
-            }
-
-
-            if (event.type == TouchEvent.TOUCH_DRAGGED || event.type == TouchEvent.TOUCH_DOWN) {
-                count = 1;
-
-                if (event.x < 2500 & event.y > 1300) {
-                    stopSendingLeft = 0;
-                } else if (event.x >= 2500 & event.y > 1300) {
-                    stopSendingRight = 0;
-                }
-                if (landscape == 1) {
-                    g.drawLandscapePixmap(pixmap, 0, 0);
-                } else {
-                    g.drawPortraitPixmap(Assets.excavatorPortraitBackground, 0, 0);
-                }
-                // Save the ID of this pointer
-                if (event.x > 2000 && event.x < 3000 && event.y < 1500) {
-                    //Back Button Code Here
-                    pixmap.dispose();
-                   // System.gc();
-                    Intent intent2 = new Intent(context.getApplicationContext(), Excavator.class);
-                    context.startActivity(intent2);
-                    return;
-                }
-                mActivePointerId = event.pointer;
-
-                //The pointer points to which finger or thumb. The first finger to touch is 0
-                if (mActivePointerId == 0) {
-                    Log.d("ADebugTag", "mActivePointerId: " + mActivePointerId);
-                    xTouch1 = event.x;          //Get the x and y coordinates of the first touch
-                    yTouch1 = event.y;
-                    //In the region of the stick and spin circle
-                    if (xTouch1 < 2500 & yTouch1 > 1300) {
-                        xTouchLeft = xTouch1;
-                        yTouchLeft = yTouch1;
-                        xPrevLeft = xTouchLeft;
-                        yPrevLeft = yTouchLeft;
-                    }
-                    //In the region of the boom and curl circle
-                    else if (xTouch1 >= 2500 & yTouch1 > 1300) {
-                        xTouchRight = xTouch1;
-                        yTouchRight = yTouch1;
-                        xPrevRight = xTouchRight;
-                        yPrevRight = yTouchRight;
-                    }
-                    //In the region of the left track slider
-                    else if (xTouch1 < 2000 & yTouch1 <= 1300) {
-                        yTrackLeft = yTouch1;
-                        yTrackPrevLeft = yTrackLeft;
-                    }
-                    //In the region of the right track slider
-                    else if (xTouch1 >= 4000 & yTouch1 <= 1300) {
-                        yTrackRight = yTouch1;
-                        yTrackPrevRight = yTrackRight;
-                    }
-                    Log.d("ADebugTag", "xTouch1: " + xTouch1);
-                    Log.d("ADebugTag", "yTouch1: " + yTouch1);
-                }
-                mActivePointerId = event.pointer;
-                //The pointer points to which finger or thumb. In this case, the other finger or thumb
-                if (mActivePointerId == 1) {
-                    Log.d("ADebugTag", "mActivePointerId: " + mActivePointerId);
-                    xTouch2 = event.x;          //Get the x and y coordinates of the second touch
-                    yTouch2 = event.y;
-                    //In the region of the stick and spin circle
-                    if (xTouch2 < 2500 & yTouch2 > 1300) {
-                        xTouchLeft = xTouch2;
-                        yTouchLeft = yTouch2;
-                        xPrevLeft = xTouchLeft;
-                        yPrevLeft = yTouchLeft;
-                    }
-                    //In the region of the boom and curl circle
-                    if (xTouch2 >= 2500 & yTouch2 > 1300) {
-                        xTouchRight = xTouch2;
-                        yTouchRight = yTouch2;
-                        xPrevRight = xTouchRight;
-                        yPrevRight = yTouchRight;
-                    }
-                    //In the region of the left track slider
-                    if (xTouch2 < 2000 & yTouch2 <= 1300) {
-                        yTrackLeft = yTouch2;
-                        yTrackPrevLeft = yTrackLeft;
-                    }
-                    //In the region of the right track slider
-                    if (xTouch2 >= 4000 & yTouch2 <= 1300) {
-                        yTrackRight = yTouch2;
-                        yTrackPrevRight = yTrackRight;
-                    }
-                    Log.d("ADebugTag", "xTouch2: " + xTouch2);
-                    Log.d("ADebugTag", "yTouch2: " + yTouch2);
-                }
-
-
-             //   if (landscape == 1) {               //The phone must be in landscape orientation
-                    g.drawCircle(event.x, event.y, 200);
-                    //g.drawJoystick(redJoystick, xTouchRight, yTouchRight);
-                 //   g.drawJoystick(redJoystick, xTouchLeft, yTouchLeft);
-                   // g.drawJoystick(redJoystick, 410, yTrackLeft);
-                    //g.drawJoystick(redJoystick, 3750, yTrackRight);
-
-               // }
-
-            }
-
-             */
 
     @Override
     public void present ( float deltaTime){
