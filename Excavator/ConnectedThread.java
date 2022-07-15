@@ -22,8 +22,10 @@ import static com.esark.excavator.GameScreen.s;
 import static com.esark.excavator.GameScreen.stopSendingBoom;
 import static com.esark.excavator.GameScreen.stopSendingCurl;
 import static com.esark.excavator.GameScreen.stopSendingLeft;
+import static com.esark.excavator.GameScreen.stopSendingLeftTrack;
 import static com.esark.excavator.GameScreen.stopSendingOrbit;
 import static com.esark.excavator.GameScreen.stopSendingRight;
+import static com.esark.excavator.GameScreen.stopSendingRightTrack;
 import static com.esark.excavator.GameScreen.stopSendingStick;
 //import static com.esark.excavator.GameScreen.stopSending;
 //import static com.esark.excavator.GameScreen.stopSendingBoom;
@@ -36,7 +38,7 @@ public class ConnectedThread extends Thread {
     private final OutputStream mmOutStream;
     private final Handler mHandler;
    // public IntToChars mIntToChars;
-    public String[] returnArray = new String[] {"0", "0", "0"};
+    public String[] returnArray = new String[] {"0", "0", "0", "0"};
     IntToChars mIntToChars = new IntToChars();
 
     public ConnectedThread(BluetoothSocket socket, Handler handler) {
@@ -82,64 +84,74 @@ public class ConnectedThread extends Thread {
 
             if(stopSendingRight == 1){
                 write("*");
-      //          SystemClock.sleep(10);
+                SystemClock.sleep(10);
             }
             else if(stopSendingRight == 0) {
                 /////////////////Bucket Curl//////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(c);      //Send an integer and get three chars in the returnArray as a return value
                 if (stopSendingCurl == 0) {
                     write("c");               //c for curl. Number of pixels in the x-direction
-                    write(returnArray[2]);          //d2 (+/-)
-                    write(returnArray[1]);          //d1 (Left digit)
-                    write(returnArray[0]);          //d2 (Right Digit)
+                    write(returnArray[3]);          //d3 (+/-)
+                    write(returnArray[2]);          //d2 (Left digit)
+                    write(returnArray[1]);          //d1 (middle digit)
+                    write(returnArray[0]);          //d0 (right digit)
                 }
-        //        SystemClock.sleep(10);
+                SystemClock.sleep(10);
                 ////////////////Boom//////////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(b);
                 if (stopSendingBoom == 0) {          //Send an integer and get three chars in the returnArray as a return value
                     write("b");               //b for boom. Number of pixels in the y-direction
-                    write(returnArray[2]);          //d2 (+/-)
-                    write(returnArray[1]);          //d1 (Left digit)
-                    write(returnArray[0]);          //d2 (Right Digit)
+                    write(returnArray[3]);          //d3 (+/-)
+                    write(returnArray[2]);          //d2 (Left digit)
+                    write(returnArray[1]);          //d1 (middle digit)
+                    write(returnArray[0]);          //d0 (right digit)
                 }
-          //      SystemClock.sleep(10);
+                SystemClock.sleep(10);
             }
 
             if(stopSendingLeft == 1){
                 write("#");
-            //    SystemClock.sleep(10);
+                SystemClock.sleep(10);
             }
             ///////////Rotate//////////////////////////
             returnArray = mIntToChars.IntToCharsMethod(o);      //Send an integer and get three chars in the returnArray as a return value
             write("o");               //o for rotate. Number of pixels in the x-direction
-            write(returnArray[2]);          //d2 (+/-)
-            write(returnArray[1]);          //d1 (Left digit)
-            write(returnArray[0]);          //d2 (Right Digit)
+            write(returnArray[3]);          //d3 (+/-)
+            write(returnArray[2]);          //d2 (Left digit)
+            write(returnArray[1]);          //d1 (middle digit)
+            write(returnArray[0]);          //d0 (right digit)
 
             if(stopSendingLeft == 0){
-              //  SystemClock.sleep(10);
+                SystemClock.sleep(10);
                 ////////////////Boom//////////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(s);
                 if(stopSendingStick == 0) {          //Send an integer and get three chars in the returnArray as a return value
                     write("s");               //s for stick. Number of pixels in the y-direction
-                    write(returnArray[2]);          //d2 (+/-)
-                    write(returnArray[1]);          //d1 (Left digit)
-                    write(returnArray[0]);          //d2 (Right Digit)
+                    write(returnArray[3]);          //d3 (+/-)
+                    write(returnArray[2]);          //d2 (Left digit)
+                    write(returnArray[1]);          //d1 (middle digit)
+                    write(returnArray[0]);          //d0 (right digit)
                 }
-                //SystemClock.sleep(10);
+                SystemClock.sleep(10);
             }
-            returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
-            write("l");               //s for stick. Number of pixels in the y-direction
-            write(returnArray[2]);          //d2 (+/-)
-            write(returnArray[1]);          //d1 (Left digit)
-            write(returnArray[0]);          //d2 (Right Digit)
-            //SystemClock.sleep(10);
-            returnArray = mIntToChars.IntToCharsMethod(r);      //Send an integer and get three chars in the returnArray as a return value
-            write("r");               //s for stick. Number of pixels in the y-direction
-            write(returnArray[2]);          //d2 (+/-)
-            write(returnArray[1]);          //d1 (Left digit)
-            write(returnArray[0]);          //d2 (Right Digit)
-            //SystemClock.sleep(10);
+            if(stopSendingLeftTrack == 0) {
+                returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
+                write("l");               //l for left track. Number of pixels in the y-direction
+                write(returnArray[3]);          //d3 (+/-)
+                write(returnArray[2]);          //d2 (Left digit)
+                write(returnArray[1]);          //d1 (middle digit)
+                write(returnArray[0]);          //d0 (right digit)
+                SystemClock.sleep(10);
+            }
+            if(stopSendingRightTrack == 0) {
+                returnArray = mIntToChars.IntToCharsMethod(r);      //Send an integer and get three chars in the returnArray as a return value
+                write("r");               //r for right track. Number of pixels in the y-direction
+                write(returnArray[3]);          //d3 (+/-)
+                write(returnArray[2]);          //d2 (Left digit)
+                write(returnArray[1]);          //d1 (middle digit)
+                write(returnArray[0]);          //d0 (right digit)
+                SystemClock.sleep(10);
+            }
         }
     }
 

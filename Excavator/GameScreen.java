@@ -65,6 +65,8 @@ public class GameScreen extends Screen implements Input{
     int numAvg = 0;
     public static int stopSendingLeft = 0;
     public static int stopSendingRight = 0;
+    public static int stopSendingLeftTrack = 0;
+    public static int stopSendingRightTrack = 0;
     public static int stopSendingBoom = 0;
     public static int stopSendingCurl = 0;
     public static int stopSendingOrbit = 0;
@@ -136,54 +138,37 @@ public class GameScreen extends Screen implements Input{
             //The pointer points to which finger or thumb. The first finger to touch is 0
             Log.d("ADebugTag", "mActivePointerId: " + mActivePointerId);
             if (event.type == TouchEvent.TOUCH_UP) {
-                //  g.drawLandscapePixmap(backgroundPixmap, 0, 0);
-/*
-                g.drawJoystick(redJoystick, xPrevBottomLeft - 375, yPrevBottomLeft - 375);          //Bottom Left Joystick
-                g.drawJoystick(redJoystick, xPrevBottomRight - 375, yPrevBottomRight - 375);           //Bottom Right joystick
-                g.drawJoystick(redJoystick, 410, yTrackPrevLeft - 375);              //Left track
-                g.drawJoystick(redJoystick, 3750, yTrackPrevRight - 375);             //Right track
+                if(event.x < 2500 && event.y > 1300) {
+                    stopSendingLeft = 1;
+                }
+                if (event.x >= 2500 && event.y > 1300){
+                    stopSendingRight = 1;
+                }
+                if (event.x < 1500 && event.y < 1300){
+                    stopSendingLeftTrack = 1;
+                }
+                if (event.x > 4000 && event.y < 1300){
+                    stopSendingRightTrack = 1;
+                }
                 touchUpCount = 1;
-
- */
-                touchUpCount = 1;
             }
-                /*
-                if (mActivePointerId == bottomLeftPtr) {
-                    bottomLeftFlag = 0;
-                }
-                if (mActivePointerId == bottomRightPtr) {
-                    bottomRightFlag = 0;
-                }
-                if (mActivePointerId == leftTrackPtr) {
-                    leftTrackFlag = 0;
-                }
-                if (mActivePointerId == rightTrackPtr) {
-                    rightTrackFlag = 0;
-                }
-
-            }
-            if (bottomLeftFlag == 0) {
-                g.drawJoystick(redJoystick, xPrevBottomLeft - 375, yPrevBottomLeft - 375);
-            }
-            if (bottomRightFlag == 0) {
-                g.drawJoystick(redJoystick, xPrevBottomRight - 375, yPrevBottomRight - 375);
-            }
-            if (leftTrackFlag == 0) {
-                g.drawJoystick(redJoystick, 410, yTrackPrevLeft - 375);
-            }
-            if (rightTrackFlag == 0) {
-                g.drawJoystick(redJoystick, 3750, yTrackPrevRight - 375);
-            }
-*/
-
-
-
             if (event.type == TouchEvent.TOUCH_DRAGGED || event.type == TouchEvent.TOUCH_DOWN) {
                 touchUpCount = 0;
                 count = 1;
                 xTouch1 = event.x;          //Get the x and y coordinates of the first touch
                 yTouch1 = event.y;
-
+                if(xTouch1 < 2500 && yTouch1 > 1300) {
+                    stopSendingLeft = 0;
+                }
+                if (xTouch1 >= 2500 && yTouch1 > 1300){
+                    stopSendingRight = 0;
+                }
+                if (xTouch1 < 1500 && yTouch1 < 1300){
+                    stopSendingLeftTrack = 0;
+                }
+                if (xTouch1 > 4000 && yTouch1 < 1300){
+                    stopSendingRightTrack = 0;
+                }
 
                 if (event.x > 2000 && event.x < 3000 && event.y < 1500) {
                     //Back Button Code Here
@@ -195,7 +180,7 @@ public class GameScreen extends Screen implements Input{
                 }
 
                 //In the region of the stick and spin circle
-                if (xTouch1 < 2500 & yTouch1 > 1300) {
+                if (xTouch1 < 2500 && yTouch1 > 1300) {
                     xTouchBottomLeft = xTouch1;
                     yTouchBottomLeft = yTouch1;
                     xPrevBottomLeft = xTouchBottomLeft;
@@ -217,7 +202,7 @@ public class GameScreen extends Screen implements Input{
                     }
                 }
                 //In the region of the boom and curl circle
-                else if (xTouch1 >= 2500 & yTouch1 > 1300) {
+                else if (xTouch1 >= 2500 && yTouch1 > 1300) {
                     xTouchBottomRight = xTouch1;
                     yTouchBottomRight = yTouch1;
                     xPrevBottomRight = xTouchBottomRight;
@@ -239,7 +224,7 @@ public class GameScreen extends Screen implements Input{
                     }
                 }
                 //In the region of the left track slider
-                else if (xTouch1 < 2000 & yTouch1 <= 1300) {
+                else if (xTouch1 < 2000 && yTouch1 <= 1300) {
                     yTrackLeft = yTouch1;
                     yTrackPrevLeft = yTrackLeft;
                     leftTrackFlag = 1;
@@ -259,7 +244,7 @@ public class GameScreen extends Screen implements Input{
                     }
                 }
                 //In the region of the right track slider
-                else if (xTouch1 >= 4000 & yTouch1 <= 1300) {
+                else if (xTouch1 >= 4000 && yTouch1 <= 1300) {
                     yTrackRight = yTouch1;
                     yTrackPrevRight = yTrackRight;
                     rightTrackFlag = 1;
@@ -290,10 +275,25 @@ public class GameScreen extends Screen implements Input{
                 //sin for y
                 scaledYL = (int) (570 * Math.sin(angleL));
                 leftThumbOutOfCircle = 1;
-
+                o = scaledXL;
+                s = scaledYL;
             } else if(((int)Math.sqrt(Math.abs((xL*xL + yL*yL)))) <= 570) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 leftThumbOutOfCircle = 0;
+                o = xL;
+                s = yL;
+            }
+            //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
+            if (o > -50 && o < 50) {
+                stopSendingOrbit = 1;
+            } else {
+                stopSendingOrbit = 0;
+            }
+            //Make a dead zone along the x-axis. Otherwise both motors would always be spinning at the same time
+            if (s > -50 && s < 50) {
+                stopSendingStick = 1;
+            } else {
+                stopSendingStick = 0;
             }
             xR = xTouchBottomRight - 3775;
             yR = 2325 - yTouchBottomRight;
@@ -305,12 +305,28 @@ public class GameScreen extends Screen implements Input{
                 //sin for y
                 scaledYR = (int) (570 * Math.sin(angleR));
                 rightThumbOutOfCircle = 1;
-            } else if((((int)Math.sqrt(Math.abs((xR*xR + yR*yR))) <= 85))) {
+                c = scaledXR;
+                b = scaledYR;
+            } else if((((int)Math.sqrt(Math.abs((xR*xR + yR*yR))) <= 570))) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 rightThumbOutOfCircle = 0;
-
+                c = xR;
+                b = yR;
             }
-
+            //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
+            if (c > -50 && c < 50) {
+                stopSendingCurl = 1;
+            } else {
+                stopSendingCurl = 0;
+            }
+            //Make a dead zone along the x-axis. Otherwise both motors would always be spinning at the same time
+            if (b > -50 && b < 50) {
+                stopSendingBoom = 1;
+            } else {
+                stopSendingBoom = 0;
+            }
+           // l = 675 - yTrackLeft;
+            //r = 675 - yTrackRight;
             if(renderCount == 10) {
                 if (touchUpCount == 0) {
                     g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
@@ -327,23 +343,29 @@ public class GameScreen extends Screen implements Input{
                 } else if (rightThumbOutOfCircle == 1) {
                     g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
                 }
-                if(yTrackLeft > 400 & yTrackLeft < 875) {
+                if(yTrackLeft > 400 && yTrackLeft < 875) {
                     g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                    l = 600 - yTrackLeft;
                 }
                 else if(yTrackLeft <= 400){
                     g.drawJoystick(redJoystick, 410, 25);
+                    l = 200;
                 }
-                else if(yTrackLeft >= 875){
+                else if(yTrackLeft >= 800){
                     g.drawJoystick(redJoystick, 410, 500);
+                    l = -200;
                 }
-                if(yTrackRight > 400 & yTrackRight < 875) {
+                if(yTrackRight > 400 && yTrackRight < 800) {
                     g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                    r = 600 - yTrackRight;
                 }
                 else if(yTrackRight <= 400){
                     g.drawJoystick(redJoystick, 3750, 25);
+                    r = 200;
                 }
-                else if(yTrackRight >= 875) {
+                else if(yTrackRight >= 800) {
                     g.drawJoystick(redJoystick, 3750, 500);
+                    r = -200;
                 }
                 renderCount = 0;
             }
