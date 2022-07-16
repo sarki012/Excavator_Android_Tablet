@@ -134,6 +134,10 @@ public class ConnectedThread extends Thread {
                 }
                 SystemClock.sleep(10);
             }
+            if(stopSendingLeftTrack == 1){
+                write("$");
+                SystemClock.sleep(10);
+            }
             if(stopSendingLeftTrack == 0) {
                 returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
                 write("l");               //l for left track. Number of pixels in the y-direction
@@ -141,6 +145,10 @@ public class ConnectedThread extends Thread {
                 write(returnArray[2]);          //d2 (Left digit)
                 write(returnArray[1]);          //d1 (middle digit)
                 write(returnArray[0]);          //d0 (right digit)
+                SystemClock.sleep(10);
+            }
+            if(stopSendingRightTrack == 1){
+                write("@");
                 SystemClock.sleep(10);
             }
             if(stopSendingRightTrack == 0) {
