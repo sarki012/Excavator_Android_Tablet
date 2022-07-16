@@ -343,7 +343,20 @@ public class GameScreen extends Screen implements Input{
                 } else if (rightThumbOutOfCircle == 1) {
                     g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
                 }
-                if(yTrackLeft > 400 && yTrackLeft < 875) {
+                if(yTrackLeft > 400 && yTrackLeft < 1000) {
+                    g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                    l = 700 - yTrackLeft;
+                }
+                else if(yTrackLeft <= 400){
+                    g.drawJoystick(redJoystick, 410, 25);
+                    l = 300;
+                }
+                else if(yTrackLeft >= 1000){
+                    g.drawJoystick(redJoystick, 410, 625);
+                    l = -300;
+                }
+                /*
+                if(yTrackLeft > 400 && yTrackLeft < 800) {
                     g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
                     l = 600 - yTrackLeft;
                 }
@@ -355,6 +368,8 @@ public class GameScreen extends Screen implements Input{
                     g.drawJoystick(redJoystick, 410, 500);
                     l = -200;
                 }
+
+                 */
                 if(yTrackRight > 400 && yTrackRight < 800) {
                     g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
                     r = 600 - yTrackRight;
