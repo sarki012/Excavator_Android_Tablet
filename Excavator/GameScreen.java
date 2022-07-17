@@ -355,32 +355,17 @@ public class GameScreen extends Screen implements Input{
                     g.drawJoystick(redJoystick, 410, 625);
                     l = -300;
                 }
-                /*
-                if(yTrackLeft > 400 && yTrackLeft < 800) {
-                    g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
-                    l = 600 - yTrackLeft;
-                }
-                else if(yTrackLeft <= 400){
-                    g.drawJoystick(redJoystick, 410, 25);
-                    l = 200;
-                }
-                else if(yTrackLeft >= 800){
-                    g.drawJoystick(redJoystick, 410, 500);
-                    l = -200;
-                }
-
-                 */
-                if(yTrackRight > 400 && yTrackRight < 800) {
+                if(yTrackRight > 400 && yTrackRight < 1000) {
                     g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
-                    r = 600 - yTrackRight;
+                    r = 700 - yTrackRight;
                 }
                 else if(yTrackRight <= 400){
                     g.drawJoystick(redJoystick, 3750, 25);
-                    r = 200;
+                    r = 300;
                 }
-                else if(yTrackRight >= 800) {
-                    g.drawJoystick(redJoystick, 3750, 500);
-                    r = -200;
+                else if(yTrackRight >= 1000) {
+                    g.drawJoystick(redJoystick, 3750, 625);
+                    r = -300;
                 }
                 renderCount = 0;
             }
