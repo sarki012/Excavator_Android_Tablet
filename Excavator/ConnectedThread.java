@@ -113,16 +113,17 @@ public class ConnectedThread extends Thread {
                 write("#");
                 SystemClock.sleep(10);
             }
-            ///////////Rotate//////////////////////////
-            returnArray = mIntToChars.IntToCharsMethod(o);      //Send an integer and get three chars in the returnArray as a return value
-            write("o");               //o for rotate. Number of pixels in the x-direction
-            write(returnArray[3]);          //d3 (+/-)
-            write(returnArray[2]);          //d2 (Left digit)
-            write(returnArray[1]);          //d1 (middle digit)
-            write(returnArray[0]);          //d0 (right digit)
 
             if(stopSendingLeft == 0){
+                ///////////Rotate//////////////////////////
+                returnArray = mIntToChars.IntToCharsMethod(o);      //Send an integer and get three chars in the returnArray as a return value
+                write("o");               //o for rotate. Number of pixels in the x-direction
+                write(returnArray[3]);          //d3 (+/-)
+                write(returnArray[2]);          //d2 (Left digit)
+                write(returnArray[1]);          //d1 (middle digit)
+                write(returnArray[0]);          //d0 (right digit)
                 SystemClock.sleep(10);
+                
                 ////////////////Boom//////////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(s);
                 if(stopSendingStick == 0) {          //Send an integer and get three chars in the returnArray as a return value
