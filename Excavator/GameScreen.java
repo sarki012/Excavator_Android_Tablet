@@ -3,6 +3,7 @@ package com.esark.excavator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -100,6 +101,10 @@ public class GameScreen extends Screen implements Input{
     public int innerCount = 0;
     public int leftThumbOutOfCircle = 0;
     public int rightThumbOutOfCircle = 0;
+    public int delay = 50;
+    public String delayString = "0";
+    public int delayUpCount = 0;
+    public int delayDownCount = 0;
 
 
     private static final int INVALID_POINTER_ID = -1;
@@ -129,6 +134,7 @@ public class GameScreen extends Screen implements Input{
             g.drawJoystick(redJoystick, 3400, 1950);           //Bottom Right joystick
             g.drawJoystick(redJoystick, 410, 300);              //Left track
             g.drawJoystick(redJoystick, 3750, 300);             //Right track
+            g.drawText("50%", 2825, 720);
         }
         int len = touchEvents.size();
         //Check to see if paused
@@ -137,6 +143,8 @@ public class GameScreen extends Screen implements Input{
             mActivePointerId = event.pointer;
             //The pointer points to which finger or thumb. The first finger to touch is 0
             Log.d("ADebugTag", "mActivePointerId: " + mActivePointerId);
+            Log.d("ADebugTag", "event.x: " + event.x);
+            Log.d("ADebugTag", "event.y: " + event.y);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if(event.x < 2500 && event.y > 1300) {
                     stopSendingLeft = 1;
@@ -149,6 +157,12 @@ public class GameScreen extends Screen implements Input{
                 }
                 if (event.x > 4000 && event.y < 1300){
                     stopSendingRightTrack = 1;
+                }
+                if (event.x > 2300 && event.x < 2600 && event.y < 600){
+                    delayUpCount = 0;
+                }
+                if (event.x > 2300 && event.x < 2600 && event.y >= 600 && event.y < 1000){
+                    delayDownCount = 0;
                 }
                 touchUpCount = 1;
             }
@@ -170,7 +184,7 @@ public class GameScreen extends Screen implements Input{
                     stopSendingRightTrack = 0;
                 }
 
-                if (event.x > 2000 && event.x < 3000 && event.y < 1500) {
+                if (event.x > 1100 && event.x < 2000 && event.y <  1200) {
                     //Back Button Code Here
                     backgroundPixmap.dispose();
                     // System.gc();
@@ -224,7 +238,7 @@ public class GameScreen extends Screen implements Input{
                     }
                 }
                 //In the region of the left track slider
-                else if (xTouch1 < 2000 && yTouch1 <= 1300) {
+                else if (xTouch1 <= 1000 && yTouch1 <= 1300) {
                     yTrackLeft = yTouch1;
                     yTrackPrevLeft = yTrackLeft;
                     leftTrackFlag = 1;
@@ -262,6 +276,24 @@ public class GameScreen extends Screen implements Input{
                             rightTrackPtr = 3;
                             break;
                     }
+                }
+                else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 < 600){
+                    if(delayUpCount == 0) {
+                        delay += 5;
+                        delayUpCount = 1;
+                    }
+                }
+                else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 >= 600 && yTouch1 < 1000){
+                    if(delayDownCount == 0){
+                        delay -= 5;
+                        delayDownCount = 1;
+                    }
+                }
+                if (delay > 100){
+                    delay = 100;
+                }
+                else if(delay < 0){
+                    delay = 0;
                 }
             }
             numAvg = 10;
@@ -327,7 +359,7 @@ public class GameScreen extends Screen implements Input{
             }
            // l = 675 - yTrackLeft;
             //r = 675 - yTrackRight;
-            if(renderCount == 10) {
+            if(renderCount == 5) {
                 if (touchUpCount == 0) {
                     g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
                 }
@@ -344,33 +376,38 @@ public class GameScreen extends Screen implements Input{
                     g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
                 }
                 if(yTrackLeft > 400 && yTrackLeft < 1000) {
-                    g.drawJoystick(redJoystick, 410, yTrackLeft - 375);
+                    g.drawJoystick(redJoystick, 50, yTrackLeft - 375);
                     l = 700 - yTrackLeft;
                 }
                 else if(yTrackLeft <= 400){
-                    g.drawJoystick(redJoystick, 410, 25);
+                    g.drawJoystick(redJoystick, 40, 25);
                     l = 300;
                 }
                 else if(yTrackLeft >= 1000){
-                    g.drawJoystick(redJoystick, 410, 625);
+                    g.drawJoystick(redJoystick, 40, 625);
                     l = -300;
                 }
                 if(yTrackRight > 400 && yTrackRight < 1000) {
-                    g.drawJoystick(redJoystick, 3750, yTrackRight - 375);
+                    g.drawJoystick(redJoystick, 4110, yTrackRight - 375);
                     r = 700 - yTrackRight;
                 }
                 else if(yTrackRight <= 400){
-                    g.drawJoystick(redJoystick, 3750, 25);
+                    g.drawJoystick(redJoystick, 4110, 25);
                     r = 300;
                 }
                 else if(yTrackRight >= 1000) {
-                    g.drawJoystick(redJoystick, 3750, 625);
+                    g.drawJoystick(redJoystick, 4110, 625);
                     r = -300;
                 }
+                delayString = String.valueOf(delay);
+                g.drawRect(2750, 500, 600, 275, 0);
+                g.drawText(delayString, 2800, 720);
+                g.drawText("%", 3200, 720);
                 renderCount = 0;
             }
             renderCount++;
         }
+
     }
 
     @Override
