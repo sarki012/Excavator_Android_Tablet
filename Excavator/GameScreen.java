@@ -284,13 +284,13 @@ public class GameScreen extends Screen implements Input{
                 s = yL;
             }
             //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
-            if (o > -50 && o < 50) {
+            if (o > -150 && o < 150) {
                 stopSendingOrbit = 1;
             } else {
                 stopSendingOrbit = 0;
             }
             //Make a dead zone along the x-axis. Otherwise both motors would always be spinning at the same time
-            if (s > -50 && s < 50) {
+            if (s > -150 && s < 150) {
                 stopSendingStick = 1;
             } else {
                 stopSendingStick = 0;
@@ -314,13 +314,13 @@ public class GameScreen extends Screen implements Input{
                 b = yR;
             }
             //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
-            if (c > -50 && c < 50) {
+            if (c > -150 && c < 150) {
                 stopSendingCurl = 1;
             } else {
                 stopSendingCurl = 0;
             }
             //Make a dead zone along the x-axis. Otherwise both motors would always be spinning at the same time
-            if (b > -50 && b < 50) {
+            if (b > -150 && b < 150) {
                 stopSendingBoom = 1;
             } else {
                 stopSendingBoom = 0;

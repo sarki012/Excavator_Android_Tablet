@@ -123,7 +123,7 @@ public class ConnectedThread extends Thread {
                 write(returnArray[1]);          //d1 (middle digit)
                 write(returnArray[0]);          //d0 (right digit)
                 SystemClock.sleep(10);
-                
+
                 ////////////////Boom//////////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(s);
                 if(stopSendingStick == 0) {          //Send an integer and get three chars in the returnArray as a return value
