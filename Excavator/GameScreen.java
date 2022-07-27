@@ -16,6 +16,7 @@ import com.esark.framework.MultiTouchHandler;
 import com.esark.framework.Pixmap;
 import com.esark.framework.Screen;
 
+import static com.esark.excavator.Assets.blueJoystick;
 import static com.esark.excavator.Assets.excavatorTabletLandscapeBackground;
 import static com.esark.excavator.Assets.redJoystick;
 import static com.esark.framework.AndroidGame.landscape;
@@ -74,6 +75,7 @@ public class GameScreen extends Screen implements Input{
     public static int stopSendingStick = 0;
     public static int backgroundCount = 0;
     public static int joystickCount = 0;
+    public static int blueJoystickCount = 0;
     int count = 0;
     public Pixmap backgroundPixmap = null;
     public int bottomLeftPtr = -1;
@@ -96,15 +98,29 @@ public class GameScreen extends Screen implements Input{
     public int yTrackPrevLeft = 300;
     public int yTrackRight = 675;
     public int yTrackPrevRight = 300;
+    public int yTrackLeftUp = 0;
+    public int yTrackRightUp = 0;
     public int touchUpCount = 0;
     public int renderCount = 1;
     public int innerCount = 0;
     public int leftThumbOutOfCircle = 0;
     public int rightThumbOutOfCircle = 0;
-    public int delay = 50;
+    public static int delay = 50;
     public String delayString = "0";
     public int delayUpCount = 0;
     public int delayDownCount = 0;
+    public int xLeftUp = 0;
+    public int yLeftUp = 0;
+    public int xLeftScaled = 0;
+    public int yLeftScaled = 0;
+    public double LeftUpAngle = 0;
+    public int LeftUpHyp = 0;
+    public int xRightScaled = 0;
+    public int yRightScaled = 0;
+    public double RightUpAngle = 0;
+    public int RightUpHyp = 0;
+    public int xRightUp = 0;
+    public int yRightUp = 0;
 
 
     private static final int INVALID_POINTER_ID = -1;
@@ -132,9 +148,10 @@ public class GameScreen extends Screen implements Input{
             g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
             g.drawJoystick(redJoystick, 850, 1950);          //Bottom Left Joystick
             g.drawJoystick(redJoystick, 3400, 1950);           //Bottom Right joystick
-            g.drawJoystick(redJoystick, 410, 300);              //Left track
-            g.drawJoystick(redJoystick, 3750, 300);             //Right track
-            g.drawText("50%", 2825, 720);
+            g.drawBlueJoystick(blueJoystick, 100, 425);              //Left track
+            g.drawBlueJoystick(blueJoystick, 4300, 425);             //Right track
+            g.drawText("50", 2800, 720);
+            g.drawText("%", 3200, 720);
         }
         int len = touchEvents.size();
         //Check to see if paused
@@ -147,16 +164,27 @@ public class GameScreen extends Screen implements Input{
             Log.d("ADebugTag", "event.y: " + event.y);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if(event.x < 2500 && event.y > 1300) {
+                    xLeftUp = event.x - 1225;
+                    yLeftUp = 2325 - event.y ;
                     stopSendingLeft = 1;
+                    LeftUpHyp = ((int) Math.sqrt((xLeftUp*xLeftUp + yLeftUp*yLeftUp))) - 375;
+                    LeftUpAngle = Math.atan2((double) yLeftUp, (double) xLeftUp);
                 }
                 if (event.x >= 2500 && event.y > 1300){
                     stopSendingRight = 1;
+                    xRightUp = event.x - 3775;
+                    yRightUp = 2325 - event.y;
+                    RightUpHyp = ((int) Math.sqrt((xRightUp*xRightUp + yRightUp*yRightUp))) - 375;
+                    RightUpAngle = Math.atan2((double) yRightUp, (double) xRightUp);
                 }
                 if (event.x < 1500 && event.y < 1300){
                     stopSendingLeftTrack = 1;
+                    yTrackLeftUp = 675 - event.y;
+
                 }
                 if (event.x > 4000 && event.y < 1300){
                     stopSendingRightTrack = 1;
+                    yTrackRightUp = 675 - event.y;
                 }
                 if (event.x > 2300 && event.x < 2600 && event.y < 600){
                     delayUpCount = 0;
@@ -357,56 +385,102 @@ public class GameScreen extends Screen implements Input{
             } else {
                 stopSendingBoom = 0;
             }
-           // l = 675 - yTrackLeft;
-            //r = 675 - yTrackRight;
-            if(renderCount == 5) {
-                if (touchUpCount == 0) {
-                    g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
-                }
-                if (leftThumbOutOfCircle == 0) {
-                    g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
-
-                } else if (leftThumbOutOfCircle == 1) {
-                    g.drawJoystick(redJoystick, 850 + scaledXL, 1950 - scaledYL);
-                }
-                if (rightThumbOutOfCircle == 0) {
-                    g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
-
-                } else if (rightThumbOutOfCircle == 1) {
-                    g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
-                }
-                if(yTrackLeft > 400 && yTrackLeft < 1000) {
-                    g.drawJoystick(redJoystick, 50, yTrackLeft - 375);
-                    l = 700 - yTrackLeft;
-                }
-                else if(yTrackLeft <= 400){
-                    g.drawJoystick(redJoystick, 40, 25);
-                    l = 300;
-                }
-                else if(yTrackLeft >= 1000){
-                    g.drawJoystick(redJoystick, 40, 625);
-                    l = -300;
-                }
-                if(yTrackRight > 400 && yTrackRight < 1000) {
-                    g.drawJoystick(redJoystick, 4110, yTrackRight - 375);
-                    r = 700 - yTrackRight;
-                }
-                else if(yTrackRight <= 400){
-                    g.drawJoystick(redJoystick, 4110, 25);
-                    r = 300;
-                }
-                else if(yTrackRight >= 1000) {
-                    g.drawJoystick(redJoystick, 4110, 625);
-                    r = -300;
-                }
-                delayString = String.valueOf(delay);
-                g.drawRect(2750, 500, 600, 275, 0);
-                g.drawText(delayString, 2800, 720);
-                g.drawText("%", 3200, 720);
-                renderCount = 0;
-            }
-            renderCount++;
         }
+        if(renderCount == 5) {
+           //if (touchUpCount == 0) {
+                g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
+            //}
+            if (leftThumbOutOfCircle == 0 && stopSendingLeft == 0) {
+                g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+
+            } else if (leftThumbOutOfCircle == 1 && stopSendingLeft == 0) {
+                g.drawJoystick(redJoystick, 850 + scaledXL, 1950 - scaledYL);
+            }
+            if (rightThumbOutOfCircle == 0 && stopSendingRight == 0) {
+                g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+
+            } else if (rightThumbOutOfCircle == 1 && stopSendingRight == 0) {
+                g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
+            }
+            if(yTrackLeft > 400 && yTrackLeft < 1000 && stopSendingLeftTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 100, yTrackLeft - 250);
+                l = 700 - yTrackLeft;
+            }
+            else if(yTrackLeft <= 400 && stopSendingLeftTrack == 0){
+                g.drawBlueJoystick(blueJoystick, 100, 25);
+                l = 300;
+            }
+            else if(yTrackLeft >= 1000 && stopSendingLeftTrack == 0){
+                g.drawBlueJoystick(blueJoystick, 100, 625);
+                l = -300;
+            }
+            if(yTrackRight > 400 && yTrackRight < 1000 && stopSendingRightTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 4300, yTrackRight - 250);
+                r = 700 - yTrackRight;
+            }
+            else if(yTrackRight <= 400 && stopSendingRightTrack == 0){
+                g.drawBlueJoystick(blueJoystick, 4300, 25);
+                r = 300;
+            }
+            else if(yTrackRight >= 1000 && stopSendingRightTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 4300, 625);
+                r = -300;
+            }
+            if(stopSendingLeft == 1) {
+                xLeftScaled = (int) (LeftUpHyp * Math.cos(LeftUpAngle));
+                yLeftScaled = (int) (LeftUpHyp * Math.sin(LeftUpAngle));
+                LeftUpHyp -= 40;
+                g.drawJoystick(redJoystick, 850 + xLeftScaled, 1950 - yLeftScaled);
+                if(LeftUpHyp < 0){
+                    LeftUpHyp = 0;
+                }
+            }
+            if(stopSendingRight == 1) {
+                xRightScaled = (int) (RightUpHyp * Math.cos(RightUpAngle));
+                yRightScaled = (int) (RightUpHyp * Math.sin(RightUpAngle));
+                RightUpHyp -= 40;
+                g.drawJoystick(redJoystick, 3400 + xRightScaled, 1950 - yRightScaled);
+                if(RightUpHyp < 0){
+                    RightUpHyp = 0;
+                }
+            }
+            if(stopSendingLeftTrack == 1){
+                g.drawBlueJoystick(blueJoystick, 100, 425 - yTrackLeftUp);
+                if(yTrackLeftUp >= 0){
+                    yTrackLeftUp -= 20;
+                    if(yTrackLeftUp < 0){
+                        yTrackLeftUp = 0;
+                    }
+                }
+                else{
+                    yTrackLeftUp += 20;
+                    if(yTrackLeftUp > 0){
+                        yTrackLeftUp = 0;
+                    }
+                }
+            }
+            if(stopSendingRightTrack == 1){
+                g.drawBlueJoystick(blueJoystick, 4300, 425 - yTrackRightUp);
+                if(yTrackRightUp >= 0){
+                    yTrackRightUp -= 20;
+                    if(yTrackRightUp < 0){
+                        yTrackRightUp = 0;
+                    }
+                }
+                else{
+                    yTrackRightUp += 20;
+                    if(yTrackRightUp > 0){
+                        yTrackRightUp = 0;
+                    }
+                }
+            }
+            delayString = String.valueOf(delay);
+            g.drawRect(2750, 500, 600, 275, 0);
+            g.drawText(delayString, 2800, 720);
+            g.drawText("%", 3200, 720);
+            renderCount = 0;
+        }
+        renderCount++;
 
     }
 
