@@ -24,7 +24,7 @@ import static com.esark.framework.AndroidGame.landscape;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class GameScreen extends Screen implements Input{
+public class GameScreen extends Screen implements Input {
     Context context = null;
     int xTouch1 = 0;
     int yTouch1 = 0;
@@ -113,15 +113,20 @@ public class GameScreen extends Screen implements Input{
     public int yLeftUp = 0;
     public int xLeftScaled = 0;
     public int yLeftScaled = 0;
-    public double LeftUpAngle = 0;
-    public int LeftUpHyp = 0;
+    public double leftUpAngle = 0;
+    public int leftUpHyp = 0;
     public int xRightScaled = 0;
     public int yRightScaled = 0;
-    public double RightUpAngle = 0;
-    public int RightUpHyp = 0;
+    public double rightUpAngle = 0;
+    public int rightUpHyp = 0;
     public int xRightUp = 0;
     public int yRightUp = 0;
-
+    public int xLeftSolidJoystick = 0;
+    public int yLeftSolidJoystick = 0;
+    public int leftHyp = 0;
+    public int xRightSolidJoystick = 0;
+    public int yRightSolidJoystick = 0;
+    public int rightHyp = 0;
 
     private static final int INVALID_POINTER_ID = -1;
     // The ‘active pointer’ is the one currently moving our object.
@@ -148,8 +153,8 @@ public class GameScreen extends Screen implements Input{
             g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
             g.drawJoystick(redJoystick, 850, 1950);          //Bottom Left Joystick
             g.drawJoystick(redJoystick, 3400, 1950);           //Bottom Right joystick
-            g.drawBlueJoystick(blueJoystick, 100, 425);              //Left track
-            g.drawBlueJoystick(blueJoystick, 4300, 425);             //Right track
+            g.drawBlueJoystick(blueJoystick, 295, 425);              //Left track
+            g.drawBlueJoystick(blueJoystick, 4110, 425);             //Right track
             g.drawText("50", 2800, 720);
             g.drawText("%", 3200, 720);
         }
@@ -163,33 +168,33 @@ public class GameScreen extends Screen implements Input{
             Log.d("ADebugTag", "event.x: " + event.x);
             Log.d("ADebugTag", "event.y: " + event.y);
             if (event.type == TouchEvent.TOUCH_UP) {
-                if(event.x < 2500 && event.y > 1300) {
+                if (event.x < 2500 && event.y > 1300) {
                     xLeftUp = event.x - 1225;
-                    yLeftUp = 2325 - event.y ;
+                    yLeftUp = 2325 - event.y;
                     stopSendingLeft = 1;
-                    LeftUpHyp = ((int) Math.sqrt((xLeftUp*xLeftUp + yLeftUp*yLeftUp))) - 375;
-                    LeftUpAngle = Math.atan2((double) yLeftUp, (double) xLeftUp);
+                    leftUpHyp = ((int) Math.sqrt((xLeftUp * xLeftUp + yLeftUp * yLeftUp))) - 375;
+                    leftUpAngle = Math.atan2((double) yLeftUp, (double) xLeftUp);
                 }
-                if (event.x >= 2500 && event.y > 1300){
+                if (event.x >= 2500 && event.y > 1300) {
                     stopSendingRight = 1;
                     xRightUp = event.x - 3775;
                     yRightUp = 2325 - event.y;
-                    RightUpHyp = ((int) Math.sqrt((xRightUp*xRightUp + yRightUp*yRightUp))) - 375;
-                    RightUpAngle = Math.atan2((double) yRightUp, (double) xRightUp);
+                    rightUpHyp = ((int) Math.sqrt((xRightUp * xRightUp + yRightUp * yRightUp))) - 375;
+                    rightUpAngle = Math.atan2((double) yRightUp, (double) xRightUp);
                 }
-                if (event.x < 1500 && event.y < 1300){
+                if (event.x < 1500 && event.y < 1300) {
                     stopSendingLeftTrack = 1;
                     yTrackLeftUp = 675 - event.y;
 
                 }
-                if (event.x > 4000 && event.y < 1300){
+                if (event.x > 4000 && event.y < 1300) {
                     stopSendingRightTrack = 1;
                     yTrackRightUp = 675 - event.y;
                 }
-                if (event.x > 2300 && event.x < 2600 && event.y < 600){
+                if (event.x > 2300 && event.x < 2600 && event.y < 600) {
                     delayUpCount = 0;
                 }
-                if (event.x > 2300 && event.x < 2600 && event.y >= 600 && event.y < 1000){
+                if (event.x > 2300 && event.x < 2600 && event.y >= 600 && event.y < 1000) {
                     delayDownCount = 0;
                 }
                 touchUpCount = 1;
@@ -199,20 +204,20 @@ public class GameScreen extends Screen implements Input{
                 count = 1;
                 xTouch1 = event.x;          //Get the x and y coordinates of the first touch
                 yTouch1 = event.y;
-                if(xTouch1 < 2500 && yTouch1 > 1300) {
+                if (xTouch1 < 2500 && yTouch1 > 1300) {
                     stopSendingLeft = 0;
                 }
-                if (xTouch1 >= 2500 && yTouch1 > 1300){
+                if (xTouch1 >= 2500 && yTouch1 > 1300) {
                     stopSendingRight = 0;
                 }
-                if (xTouch1 < 1500 && yTouch1 < 1300){
+                if (xTouch1 < 1500 && yTouch1 < 1300) {
                     stopSendingLeftTrack = 0;
                 }
-                if (xTouch1 > 4000 && yTouch1 < 1300){
+                if (xTouch1 > 4000 && yTouch1 < 1300) {
                     stopSendingRightTrack = 0;
                 }
 
-                if (event.x > 1100 && event.x < 2000 && event.y <  1200) {
+                if (event.x > 1100 && event.x < 2000 && event.y < 1200) {
                     //Back Button Code Here
                     backgroundPixmap.dispose();
                     // System.gc();
@@ -304,42 +309,42 @@ public class GameScreen extends Screen implements Input{
                             rightTrackPtr = 3;
                             break;
                     }
-                }
-                else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 < 600){
-                    if(delayUpCount == 0) {
+                } else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 < 600) {
+                    if (delayUpCount == 0) {
                         delay += 5;
                         delayUpCount = 1;
                     }
-                }
-                else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 >= 600 && yTouch1 < 1000){
-                    if(delayDownCount == 0){
+                } else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 >= 600 && yTouch1 < 1000) {
+                    if (delayDownCount == 0) {
                         delay -= 5;
                         delayDownCount = 1;
                     }
                 }
-                if (delay > 100){
+                if (delay > 100) {
                     delay = 100;
-                }
-                else if(delay < 0){
+                } else if (delay < 0) {
                     delay = 0;
                 }
             }
             numAvg = 10;
             xL = xTouchBottomLeft - 1225;
             yL = 2325 - yTouchBottomLeft;
-            if (((int)Math.sqrt(Math.abs((xL*xL + yL*yL)))) > 570) {
+            if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) > 570) {
                 //Inverse tangent to find the angle
                 angleL = Math.atan2((double) yL, (double) xL);
                 //cos for x
                 scaledXL = (int) (570 * Math.cos(angleL));
                 //sin for y
                 scaledYL = (int) (570 * Math.sin(angleL));
+                leftHyp = 570;
                 leftThumbOutOfCircle = 1;
                 o = scaledXL;
                 s = scaledYL;
-            } else if(((int)Math.sqrt(Math.abs((xL*xL + yL*yL)))) <= 570) {
+            } else if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) <= 570) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 leftThumbOutOfCircle = 0;
+                leftHyp = (int) Math.sqrt(xL * xL + yL * yL);
+                angleL = Math.atan2((double) yL, (double) xL);
                 o = xL;
                 s = yL;
             }
@@ -357,19 +362,22 @@ public class GameScreen extends Screen implements Input{
             }
             xR = xTouchBottomRight - 3775;
             yR = 2325 - yTouchBottomRight;
-            if (((int)Math.sqrt(Math.abs((xR*xR + yR*yR)))) > 570) {
+            if (((int) Math.sqrt(Math.abs((xR * xR + yR * yR)))) > 570) {
                 //Inverse tangent to find the angle
                 angleR = Math.atan2((double) yR, (double) xR);
                 //cos for x
                 scaledXR = (int) (570 * Math.cos(angleR));
                 //sin for y
                 scaledYR = (int) (570 * Math.sin(angleR));
+                rightHyp = 570;
                 rightThumbOutOfCircle = 1;
                 c = scaledXR;
                 b = scaledYR;
-            } else if((((int)Math.sqrt(Math.abs((xR*xR + yR*yR))) <= 570))) {
+            } else if ((((int) Math.sqrt(Math.abs((xR * xR + yR * yR))) <= 570))) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 rightThumbOutOfCircle = 0;
+                rightHyp = (int) Math.sqrt(xR*xR + yR*yR);
+                angleR = Math.atan2((double) yR, (double) xR);
                 c = xR;
                 b = yR;
             }
@@ -386,103 +394,129 @@ public class GameScreen extends Screen implements Input{
                 stopSendingBoom = 0;
             }
         }
-        if(renderCount == 5) {
-           //if (touchUpCount == 0) {
-                g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
+        if (renderCount == 5) {
+            //if (touchUpCount == 0) {
+            g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
             //}
             if (leftThumbOutOfCircle == 0 && stopSendingLeft == 0) {
+                for (int k = 0; k <= leftHyp; k += 10) {
+                    xLeftSolidJoystick = (int) (k * Math.cos(angleL));
+                    yLeftSolidJoystick = (int) (k * Math.sin(angleL));
+                    g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);
+                }
                 g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
 
             } else if (leftThumbOutOfCircle == 1 && stopSendingLeft == 0) {
+                for (int k = 0; k <= leftHyp; k += 10) {
+                    xLeftSolidJoystick = (int) (k * Math.cos(angleL));
+                    yLeftSolidJoystick = (int) (k * Math.sin(angleL));
+                    g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);
+                }
                 g.drawJoystick(redJoystick, 850 + scaledXL, 1950 - scaledYL);
             }
             if (rightThumbOutOfCircle == 0 && stopSendingRight == 0) {
+                for (int k = 0; k <= rightHyp; k += 10) {
+                    xRightSolidJoystick = (int) (k * Math.cos(angleR));
+                    yRightSolidJoystick = (int) (k * Math.sin(angleR));
+                    g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);
+                }
                 g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
 
-            } else if (rightThumbOutOfCircle == 1 && stopSendingRight == 0) {
-                g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
+        } else if (rightThumbOutOfCircle == 1 && stopSendingRight == 0) {
+            for (int k = 0; k <= rightHyp; k += 10) {
+                xRightSolidJoystick = (int) (k * Math.cos(angleR));
+                yRightSolidJoystick = (int) (k * Math.sin(angleR));
+                g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);
             }
-            if(yTrackLeft > 400 && yTrackLeft < 1000 && stopSendingLeftTrack == 0) {
-                g.drawBlueJoystick(blueJoystick, 100, yTrackLeft - 250);
-                l = 700 - yTrackLeft;
-            }
-            else if(yTrackLeft <= 400 && stopSendingLeftTrack == 0){
-                g.drawBlueJoystick(blueJoystick, 100, 25);
-                l = 300;
-            }
-            else if(yTrackLeft >= 1000 && stopSendingLeftTrack == 0){
-                g.drawBlueJoystick(blueJoystick, 100, 625);
-                l = -300;
-            }
-            if(yTrackRight > 400 && yTrackRight < 1000 && stopSendingRightTrack == 0) {
-                g.drawBlueJoystick(blueJoystick, 4300, yTrackRight - 250);
-                r = 700 - yTrackRight;
-            }
-            else if(yTrackRight <= 400 && stopSendingRightTrack == 0){
-                g.drawBlueJoystick(blueJoystick, 4300, 25);
-                r = 300;
-            }
-            else if(yTrackRight >= 1000 && stopSendingRightTrack == 0) {
-                g.drawBlueJoystick(blueJoystick, 4300, 625);
-                r = -300;
-            }
-            if(stopSendingLeft == 1) {
-                xLeftScaled = (int) (LeftUpHyp * Math.cos(LeftUpAngle));
-                yLeftScaled = (int) (LeftUpHyp * Math.sin(LeftUpAngle));
-                LeftUpHyp -= 40;
-                g.drawJoystick(redJoystick, 850 + xLeftScaled, 1950 - yLeftScaled);
-                if(LeftUpHyp < 0){
-                    LeftUpHyp = 0;
-                }
-            }
-            if(stopSendingRight == 1) {
-                xRightScaled = (int) (RightUpHyp * Math.cos(RightUpAngle));
-                yRightScaled = (int) (RightUpHyp * Math.sin(RightUpAngle));
-                RightUpHyp -= 40;
-                g.drawJoystick(redJoystick, 3400 + xRightScaled, 1950 - yRightScaled);
-                if(RightUpHyp < 0){
-                    RightUpHyp = 0;
-                }
-            }
-            if(stopSendingLeftTrack == 1){
-                g.drawBlueJoystick(blueJoystick, 100, 425 - yTrackLeftUp);
-                if(yTrackLeftUp >= 0){
-                    yTrackLeftUp -= 20;
-                    if(yTrackLeftUp < 0){
-                        yTrackLeftUp = 0;
-                    }
-                }
-                else{
-                    yTrackLeftUp += 20;
-                    if(yTrackLeftUp > 0){
-                        yTrackLeftUp = 0;
-                    }
-                }
-            }
-            if(stopSendingRightTrack == 1){
-                g.drawBlueJoystick(blueJoystick, 4300, 425 - yTrackRightUp);
-                if(yTrackRightUp >= 0){
-                    yTrackRightUp -= 20;
-                    if(yTrackRightUp < 0){
-                        yTrackRightUp = 0;
-                    }
-                }
-                else{
-                    yTrackRightUp += 20;
-                    if(yTrackRightUp > 0){
-                        yTrackRightUp = 0;
-                    }
-                }
-            }
-            delayString = String.valueOf(delay);
-            g.drawRect(2750, 500, 600, 275, 0);
-            g.drawText(delayString, 2800, 720);
-            g.drawText("%", 3200, 720);
-            renderCount = 0;
+            g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
         }
-        renderCount++;
+        if (yTrackLeft > 400 && yTrackLeft < 1000 && stopSendingLeftTrack == 0) {
+            g.drawBlueJoystick(blueJoystick, 295, yTrackLeft - 250);
+            l = 700 - yTrackLeft;
+        } else if (yTrackLeft <= 400 && stopSendingLeftTrack == 0) {
+            g.drawBlueJoystick(blueJoystick, 295, 25);
+            l = 300;
+        } else if (yTrackLeft >= 1000 && stopSendingLeftTrack == 0) {
+            g.drawBlueJoystick(blueJoystick, 295, 625);
+            l = -300;
+        }
+        if (yTrackRight > 400 && yTrackRight < 1000 && stopSendingRightTrack == 0) {
+            g.drawBlueJoystick(blueJoystick, 4110, yTrackRight - 250);
+            r = 700 - yTrackRight;
+        } else if (yTrackRight <= 400 && stopSendingRightTrack == 0) {
+            g.drawBlueJoystick(blueJoystick, 4110, 25);
+            r = 300;
+        } else if (yTrackRight >= 1000 && stopSendingRightTrack == 0) {
+            g.drawBlueJoystick(blueJoystick, 4110, 625);
+            r = -300;
+        }
+        if (stopSendingLeft == 1) {
+            xLeftScaled = (int) (leftUpHyp * Math.cos(leftUpAngle));
+            yLeftScaled = (int) (leftUpHyp * Math.sin(leftUpAngle));
+            for (int k = 0; k <= leftUpHyp; k += 10) {
+                xLeftSolidJoystick = (int) (k * Math.cos(leftUpAngle));
+                yLeftSolidJoystick = (int) (k * Math.sin(leftUpAngle));
+                g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);
+            }
+            g.drawJoystick(redJoystick, 850 + xLeftScaled, 1950 - yLeftScaled);
+            leftUpHyp -= 40;
+            if (leftUpHyp < 0) {
+                leftUpHyp = 0;
+            }
+        }
+        if (stopSendingRight == 1) {
+            xRightScaled = (int) (rightUpHyp * Math.cos(rightUpAngle));
+            yRightScaled = (int) (rightUpHyp * Math.sin(rightUpAngle));
+            for (int k = 0; k <= rightUpHyp; k += 10) {
+                xRightSolidJoystick = (int) (k * Math.cos(rightUpAngle));
+                yRightSolidJoystick = (int) (k * Math.sin(rightUpAngle));
+                g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);
+            }
+            rightUpHyp -= 40;
+            g.drawJoystick(redJoystick, 3400 + xRightScaled, 1950 - yRightScaled);
+            if (rightUpHyp < 0) {
+                rightUpHyp = 0;
+            }
+        }
+        if (stopSendingLeftTrack == 1) {
+            g.drawBlueJoystick(blueJoystick, 295, 425 - yTrackLeftUp);
+            if (yTrackLeftUp >= 0) {
+                yTrackLeftUp -= 30;
+                if (yTrackLeftUp < 0) {
+                    yTrackLeftUp = 0;
+                }
+            } else {
+                yTrackLeftUp += 30;
+                if (yTrackLeftUp > 0) {
+                    yTrackLeftUp = 0;
+                }
+            }
+        }
+        if (stopSendingRightTrack == 1) {
+            g.drawBlueJoystick(blueJoystick, 4110, 425 - yTrackRightUp);
+            if (yTrackRightUp >= 0) {
+                yTrackRightUp -= 30;
+                if (yTrackRightUp < 0) {
+                    yTrackRightUp = 0;
+                }
+            } else {
+                yTrackRightUp += 30;
+                if (yTrackRightUp > 0) {
+                    yTrackRightUp = 0;
+                }
+            }
+        }
+        delayString = String.valueOf(delay);
+        g.drawRect(2750, 500, 600, 275, 0);
+        g.drawText(delayString, 2800, 720);
+        g.drawText("%", 3200, 720);
+        renderCount = 0;
 
     }
+
+    renderCount++;
+
+}
 
     @Override
     public void present ( float deltaTime){
