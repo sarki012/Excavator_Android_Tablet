@@ -16,6 +16,7 @@ public class LoadingScreen extends Screen {
         Graphics g = game.getGraphics();
         Assets.excavatorTabletLandscapeBackground = g.newPixmap("excavatorTabletLandscapeBackground.png", PixmapFormat.ARGB4444);
         Assets.redJoystick = g.newPixmap("redJoystick.png", PixmapFormat.ARGB4444);
+        Assets.blueJoystick = g.newPixmap("blueSphereJoystick.png", PixmapFormat.ARGB4444);
         Assets.excavatorPortraitBackground = g.newPixmap("excavatorPortraitBackground.png", PixmapFormat.ARGB4444);
         game.setScreen(gameScreen);
     }
