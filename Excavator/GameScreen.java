@@ -338,27 +338,27 @@ public class GameScreen extends Screen implements Input {
                 scaledYL = (int) (570 * Math.sin(angleL));
                 leftHyp = 570;
                 leftThumbOutOfCircle = 1;
-                o = scaledXL;
-                s = scaledYL;
+                if(stopSendingLeft == 0) {
+                    o = scaledXL;
+                    s = scaledYL;
+                }
+                else{
+                    o = 0;
+                    s = 0;
+                }
             } else if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) <= 570) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 leftThumbOutOfCircle = 0;
                 leftHyp = (int) Math.sqrt(xL * xL + yL * yL);
                 angleL = Math.atan2((double) yL, (double) xL);
-                o = xL;
-                s = yL;
-            }
-            //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
-            if (o > -150 && o < 150) {
-                stopSendingOrbit = 1;
-            } else {
-                stopSendingOrbit = 0;
-            }
-            //Make a dead zone along the x-axis. Otherwise both motors would always be spinning at the same time
-            if (s > -150 && s < 150) {
-                stopSendingStick = 1;
-            } else {
-                stopSendingStick = 0;
+                if(stopSendingLeft == 0) {
+                    o = xL;
+                    s = yL;
+                }
+                else{
+                    o = 0;
+                    s = 0;
+                }
             }
             xR = xTouchBottomRight - 3775;
             yR = 2325 - yTouchBottomRight;
@@ -371,16 +371,30 @@ public class GameScreen extends Screen implements Input {
                 scaledYR = (int) (570 * Math.sin(angleR));
                 rightHyp = 570;
                 rightThumbOutOfCircle = 1;
-                c = scaledXR;
-                b = scaledYR;
-            } else if ((((int) Math.sqrt(Math.abs((xR * xR + yR * yR))) <= 570))) {
+                if(stopSendingRight == 0) {
+                    c = scaledXR;
+                    b = scaledYR;
+                }
+                else if(stopSendingRight == 1){
+                    c = 0;
+                    b = 0;
+                }
+            }
+            if ((((int) Math.sqrt(Math.abs((xR * xR + yR * yR))) <= 570))) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 rightThumbOutOfCircle = 0;
                 rightHyp = (int) Math.sqrt(xR*xR + yR*yR);
                 angleR = Math.atan2((double) yR, (double) xR);
-                c = xR;
-                b = yR;
+                if(stopSendingRight == 0) {
+                    c = xR;
+                    b = yR;
+                }
+                else if(stopSendingRight == 1){
+                    c = 0;
+                    b = 0;
+                }
             }
+            /*
             //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
             if (c > -150 && c < 150) {
                 stopSendingCurl = 1;
@@ -393,6 +407,8 @@ public class GameScreen extends Screen implements Input {
             } else {
                 stopSendingBoom = 0;
             }
+
+             */
         }
         if (renderCount == 5) {
             //if (touchUpCount == 0) {
@@ -511,6 +527,7 @@ public class GameScreen extends Screen implements Input {
         g.drawText(delayString, 2800, 720);
         g.drawText("%", 3200, 720);
         renderCount = 0;
+        //g.drawJoystick(redJoystick, 3500, 1950);           //3400, 1950
 
     }
 
