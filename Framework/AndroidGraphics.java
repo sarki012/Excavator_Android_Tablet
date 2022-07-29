@@ -16,6 +16,7 @@ import android.graphics.Rect;
 import android.util.LruCache;
 
 import static com.esark.excavator.GameScreen.backgroundCount;
+import static com.esark.excavator.GameScreen.blueJoystickCount;
 import static com.esark.excavator.GameScreen.joystickCount;
 
 import com.esark.excavator.GetLruCache;
@@ -30,6 +31,7 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     Rect dstRect = new Rect();
     public Bitmap resizedBitmap = null;
     public Bitmap joystickBitmap = null;
+    public Bitmap blueJoystickBitmap = null;
  //   private Bitmap cacheBitmap = null;
     public static int staticCount = 0;
    // public LruCache cache;
@@ -110,7 +112,7 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
     }
 
     public void drawRect(int x, int y, int width, int height, int color) {
-        paint.setColor(Color.RED);
+        paint.setColor(Color.WHITE);
         paint.setStyle(Style.FILL);
         canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
         return;
@@ -131,6 +133,17 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
         return;
     }
 */
+    public void drawBlueJoystick(Pixmap pixmap, int x, int y) {
+        mMemoryCache = GetLruCache.get();
+        if (blueJoystickCount == 0) {
+            blueJoystickBitmap = Bitmap.createScaledBitmap(((AndroidPixmap) pixmap).bitmap, 500, 500, false);
+            canvas.drawBitmap(blueJoystickBitmap, x, y, null);
+            addBitmapToMemoryCache("blueJoystickKey", blueJoystickBitmap);
+            blueJoystickCount = 1;
+        }
+        canvas.drawBitmap(getBitmapFromMemCache("blueJoystickKey"), x, y, null);
+        return;
+    }
     public void drawJoystick(Pixmap pixmap, int x, int y) {
         mMemoryCache = GetLruCache.get();
         if (joystickCount == 0) {
@@ -183,8 +196,8 @@ public class AndroidGraphics extends AndroidGame implements Graphics {
      */
 
     public void drawText(String percent, int x, int y) {
-        paint.setColor(Color.WHITE);
-        paint.setTextSize(75);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(250);
         canvas.drawText(percent, x, y, paint);
         return;
     }

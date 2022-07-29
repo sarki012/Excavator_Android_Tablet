@@ -99,14 +99,20 @@ public class ConnectedThread extends Thread {
             write(returnArray[1]);          //d1 (middle digit)
             write(returnArray[0]);          //d0 (right digit)
             SystemClock.sleep(10);
-            ///////////Rotate//////////////////////////
-            returnArray = mIntToChars.IntToCharsMethod(o);      //Send an integer and get three chars in the returnArray as a return value
-            write("o");               //o for rotate. Number of pixels in the x-direction
-            write(returnArray[3]);          //d3 (+/-)
-            write(returnArray[2]);          //d2 (Left digit)
-            write(returnArray[1]);          //d1 (middle digit)
-            write(returnArray[0]);          //d0 (right digit)
-            SystemClock.sleep(10);
+
+            if(stopSendingLeft == 1){
+                write("#");
+            }
+            else {
+                ///////////Rotate//////////////////////////
+                returnArray = mIntToChars.IntToCharsMethod(o);      //Send an integer and get three chars in the returnArray as a return value
+                write("o");               //o for rotate. Number of pixels in the x-direction
+                write(returnArray[3]);          //d3 (+/-)
+                write(returnArray[2]);          //d2 (Left digit)
+                write(returnArray[1]);          //d1 (middle digit)
+                write(returnArray[0]);          //d0 (right digit)
+                SystemClock.sleep(10);
+            }
 
             ////////////////Boom//////////////////////////////
             returnArray = mIntToChars.IntToCharsMethod(s);
@@ -117,22 +123,33 @@ public class ConnectedThread extends Thread {
             write(returnArray[1]);          //d1 (middle digit)
             write(returnArray[0]);          //d0 (right digit)
             SystemClock.sleep(10);
-            //Left Track
-            returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
-            write("l");               //l for left track. Number of pixels in the y-direction
-            write(returnArray[3]);          //d3 (+/-)
-            write(returnArray[2]);          //d2 (Left digit)
-            write(returnArray[1]);          //d1 (middle digit)
-            write(returnArray[0]);          //d0 (right digit)
-            SystemClock.sleep(10);
-            //Right Track
-            returnArray = mIntToChars.IntToCharsMethod(r);      //Send an integer and get three chars in the returnArray as a return value
-            write("r");               //r for right track. Number of pixels in the y-direction
-            write(returnArray[3]);          //d3 (+/-)
-            write(returnArray[2]);          //d2 (Left digit)
-            write(returnArray[1]);          //d1 (middle digit)
-            write(returnArray[0]);          //d0 (right digit)
-            SystemClock.sleep(10);
+            
+            if(stopSendingLeftTrack == 1){
+                write("$");
+            }
+            else {
+                //Left Track
+                returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
+                write("l");               //l for left track. Number of pixels in the y-direction
+                write(returnArray[3]);          //d3 (+/-)
+                write(returnArray[2]);          //d2 (Left digit)
+                write(returnArray[1]);          //d1 (middle digit)
+                write(returnArray[0]);          //d0 (right digit)
+                SystemClock.sleep(10);
+            }
+            if(stopSendingRightTrack == 1){
+                write("@");
+            }
+            else {
+                //Right Track
+                returnArray = mIntToChars.IntToCharsMethod(r);      //Send an integer and get three chars in the returnArray as a return value
+                write("r");               //r for right track. Number of pixels in the y-direction
+                write(returnArray[3]);          //d3 (+/-)
+                write(returnArray[2]);          //d2 (Left digit)
+                write(returnArray[1]);          //d1 (middle digit)
+                write(returnArray[0]);          //d0 (right digit)
+                SystemClock.sleep(10);
+            }
 
             returnArray = mIntToChars.IntToCharsMethod(delay);      //Send an integer and get three chars in the returnArray as a return value
             write("d");               //r for right track. Number of pixels in the y-direction

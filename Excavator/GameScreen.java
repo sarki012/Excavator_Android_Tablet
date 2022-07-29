@@ -65,10 +65,10 @@ public class GameScreen extends Screen implements Input {
     int xTouch2 = 0;
     int yTouch2 = 0;
     int numAvg = 0;
-    public static int stopSendingLeft = 0;
-    public static int stopSendingRight = 0;
-    public static int stopSendingLeftTrack = 0;
-    public static int stopSendingRightTrack = 0;
+    public static int stopSendingLeft = 1;
+    public static int stopSendingRight = 1;
+    public static int stopSendingLeftTrack = 1;
+    public static int stopSendingRightTrack = 1;
     public static int stopSendingBoom = 0;
     public static int stopSendingCurl = 0;
     public static int stopSendingOrbit = 0;
@@ -394,21 +394,6 @@ public class GameScreen extends Screen implements Input {
                     b = 0;
                 }
             }
-            /*
-            //Make a dead zone along the y-axis. Otherwise both motors would always be spinning at the same time
-            if (c > -150 && c < 150) {
-                stopSendingCurl = 1;
-            } else {
-                stopSendingCurl = 0;
-            }
-            //Make a dead zone along the x-axis. Otherwise both motors would always be spinning at the same time
-            if (b > -150 && b < 150) {
-                stopSendingBoom = 1;
-            } else {
-                stopSendingBoom = 0;
-            }
-
-             */
         }
         if (renderCount == 5) {
             //if (touchUpCount == 0) {
@@ -446,25 +431,35 @@ public class GameScreen extends Screen implements Input {
             }
             g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
         }
-        if (yTrackLeft > 400 && yTrackLeft < 1000 && stopSendingLeftTrack == 0) {
-            g.drawBlueJoystick(blueJoystick, 295, yTrackLeft - 250);
-            l = 700 - yTrackLeft;
-        } else if (yTrackLeft <= 400 && stopSendingLeftTrack == 0) {
-            g.drawBlueJoystick(blueJoystick, 295, 25);
-            l = 300;
-        } else if (yTrackLeft >= 1000 && stopSendingLeftTrack == 0) {
-            g.drawBlueJoystick(blueJoystick, 295, 625);
-            l = -300;
+        if(stopSendingLeftTrack == 1){
+            l = 0;
         }
-        if (yTrackRight > 400 && yTrackRight < 1000 && stopSendingRightTrack == 0) {
-            g.drawBlueJoystick(blueJoystick, 4110, yTrackRight - 250);
-            r = 700 - yTrackRight;
-        } else if (yTrackRight <= 400 && stopSendingRightTrack == 0) {
-            g.drawBlueJoystick(blueJoystick, 4110, 25);
-            r = 300;
-        } else if (yTrackRight >= 1000 && stopSendingRightTrack == 0) {
-            g.drawBlueJoystick(blueJoystick, 4110, 625);
-            r = -300;
+        else {
+            if (yTrackLeft > 400 && yTrackLeft < 1000 && stopSendingLeftTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 295, yTrackLeft - 250);
+                l = 700 - yTrackLeft;
+            } else if (yTrackLeft <= 400 && stopSendingLeftTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 295, 150);  //y was 25
+                l = 300;
+            } else if (yTrackLeft >= 1000 && stopSendingLeftTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 295, 750);     //y was 625
+                l = -300;
+            }
+        }
+        if(stopSendingRightTrack == 1){
+            r = 0;
+        }
+        else {
+            if (yTrackRight > 400 && yTrackRight < 1000 && stopSendingRightTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 4110, yTrackRight - 250);
+                r = 700 - yTrackRight;
+            } else if (yTrackRight <= 400 && stopSendingRightTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 4110, 150);
+                r = 300;
+            } else if (yTrackRight >= 1000 && stopSendingRightTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 4110, 750);
+                r = -300;
+            }
         }
         if (stopSendingLeft == 1) {
             xLeftScaled = (int) (leftUpHyp * Math.cos(leftUpAngle));
