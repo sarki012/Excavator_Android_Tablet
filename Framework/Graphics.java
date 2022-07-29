@@ -20,6 +20,8 @@ public interface Graphics {
 
   //  public void drawPixmap(Pixmap pixmap, int x, int y);
 
+    public void drawBlueJoystick(Pixmap pixmap, int x, int y);
+
     public void drawJoystick(Pixmap pixmap, int x, int y);
 
     public void drawPortraitPixmap(Pixmap pixmap, int x, int y);
