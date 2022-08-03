@@ -109,32 +109,7 @@ public abstract class AndroidGame extends Activity implements Game {
     until the app shuts down. You are guaranteed that the Application class will always
     be "alive" when ever one of your activities are.
          */
-        /*
-        if(staticCount == 0) {
-            // Get max available VM memory, exceeding this amount will throw an
-            // OutOfMemory exception. Stored in kilobytes as LruCache takes an
-            // int in its constructor.
-            final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
-            // Use 1/8th of the available memory for this memory cache.
-            final int cacheSize = maxMemory / 5;        //Was 8
-            mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
-                @Override
-                protected int sizeOf(String key, Bitmap bitmap) {
-                    // The cache size will be measured in kilobytes rather than
-                    // number of items.
-                    return bitmap.getByteCount() / 1024;
-                }
-            };
-           // mMemoryCache = new LruCache(cacheSize) {
-             //   protected int sizeOf(String key, Bitmap bitmap) {
-                 //   return bitmap.getByteCount();
-               // }
-           // };
-            staticCount++;
-        }
-
-         */
         setContentView(R.layout.activity_main);
 
         // Get the pixel dimensions of the screen
@@ -230,12 +205,6 @@ public abstract class AndroidGame extends Activity implements Game {
             }
         });
 
-
-        // requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //   getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        //           WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         if(isLandscape == true)

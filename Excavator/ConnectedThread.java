@@ -28,11 +28,8 @@ import static com.esark.excavator.GameScreen.stopSendingOrbit;
 import static com.esark.excavator.GameScreen.stopSendingRight;
 import static com.esark.excavator.GameScreen.stopSendingRightTrack;
 import static com.esark.excavator.GameScreen.stopSendingStick;
-//import static com.esark.excavator.GameScreen.stopSending;
-//import static com.esark.excavator.GameScreen.stopSendingBoom;
-//import static com.esark.excavator.GameScreen.stopSendingCurl;
 
-
+//Connected Thread handles Bluetooth communication
 public class ConnectedThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
@@ -81,7 +78,6 @@ public class ConnectedThread extends Thread {
                 break;
             }
 
-            //Try delays between the characters to make it not jump SystemClock.sleep
             /////////////////Bucket Curl//////////////////////
             returnArray = mIntToChars.IntToCharsMethod(c);      //Send an integer and get three chars in the returnArray as a return value
             write("c");               //c for curl. Number of pixels in the x-direction
@@ -90,6 +86,7 @@ public class ConnectedThread extends Thread {
             write(returnArray[1]);          //d1 (middle digit)
             write(returnArray[0]);          //d0 (right digit)
             SystemClock.sleep(10);
+
             ////////////////Boom//////////////////////////////
             returnArray = mIntToChars.IntToCharsMethod(b);
             //Send an integer and get three chars in the returnArray as a return value
@@ -100,8 +97,8 @@ public class ConnectedThread extends Thread {
             write(returnArray[0]);          //d0 (right digit)
             SystemClock.sleep(10);
 
-            if(stopSendingLeft == 1){
-                write("#");
+            if(stopSendingLeft == 1 || stopSendingOrbit == 1){      //Bottom left joystick thumb is lifted or x-coordinate is between -300 and 300
+                write("#");             //Signal to firmware not to touch the rotate stepper motor
             }
             else {
                 ///////////Rotate//////////////////////////
@@ -114,7 +111,7 @@ public class ConnectedThread extends Thread {
                 SystemClock.sleep(10);
             }
 
-            ////////////////Boom//////////////////////////////
+            ////////////////Stick//////////////////////////////
             returnArray = mIntToChars.IntToCharsMethod(s);
             //Send an integer and get three chars in the returnArray as a return value
             write("s");               //s for stick. Number of pixels in the y-direction
@@ -123,12 +120,12 @@ public class ConnectedThread extends Thread {
             write(returnArray[1]);          //d1 (middle digit)
             write(returnArray[0]);          //d0 (right digit)
             SystemClock.sleep(10);
-            
-            if(stopSendingLeftTrack == 1){
-                write("$");
+
+            if(stopSendingLeftTrack == 1){      //Left track thumb is lifted
+                write("$");               //Signal to firmware not to touch the motor
             }
             else {
-                //Left Track
+                ///////////////Left Track////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(l);      //Send an integer and get three chars in the returnArray as a return value
                 write("l");               //l for left track. Number of pixels in the y-direction
                 write(returnArray[3]);          //d3 (+/-)
@@ -137,11 +134,11 @@ public class ConnectedThread extends Thread {
                 write(returnArray[0]);          //d0 (right digit)
                 SystemClock.sleep(10);
             }
-            if(stopSendingRightTrack == 1){
-                write("@");
+            if(stopSendingRightTrack == 1){      //Right track thumb is lifted
+                write("@");                //Signal to firmware not to touch the motor
             }
             else {
-                //Right Track
+                ///////////////Right Track/////////////////////////
                 returnArray = mIntToChars.IntToCharsMethod(r);      //Send an integer and get three chars in the returnArray as a return value
                 write("r");               //r for right track. Number of pixels in the y-direction
                 write(returnArray[3]);          //d3 (+/-)
@@ -150,7 +147,7 @@ public class ConnectedThread extends Thread {
                 write(returnArray[0]);          //d0 (right digit)
                 SystemClock.sleep(10);
             }
-
+            ////////////////////////Delay/////////////////////////////
             returnArray = mIntToChars.IntToCharsMethod(delay);      //Send an integer and get three chars in the returnArray as a return value
             write("d");               //r for right track. Number of pixels in the y-direction
             write(returnArray[3]);          //d3 (+/-)
@@ -161,9 +158,6 @@ public class ConnectedThread extends Thread {
         }
     }
 
-    /* Call this from the main activity to send data to the remote device
-    * So I'm now sending a dummy command to the device every 1 second (kind of "keep-alive" command) and now Android is happy because it's not a one-way communication anymore
-    *  */
     public void write(String input) {
         byte[] bytes = input.getBytes();           //converts entered String into bytes
         try {
