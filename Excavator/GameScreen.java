@@ -33,8 +33,6 @@ public class GameScreen extends Screen implements Input {
     int yR = 0;
     int xL = 0;
     int yL = 0;
-    int yLTrack = 0;
-    int yRTrack = 0;
     int scaledXR = 0;
     int scaledYR = 0;
     int scaledXL = 0;
@@ -47,24 +45,6 @@ public class GameScreen extends Screen implements Input {
     public static int s = 0;
     public static int l = 0;
     public static int r = 0;
-    int[] tempCArr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] tempBArr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int tempC = 0;
-    int tempB = 0;
-    int i = 0;
-    int h = 0;
-    int j = 0;
-    int k = 0;
-    int m = 0;
-    int tempO = 0;
-    int tempS = 0;
-    int[] tempOArr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int[] tempSArr = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int leftCount = 0;
-    int rightCount = 0;
-    int xTouch2 = 0;
-    int yTouch2 = 0;
-    int numAvg = 0;
     public static int stopSendingLeft = 1;
     public static int stopSendingRight = 1;
     public static int stopSendingLeftTrack = 1;
@@ -78,31 +58,15 @@ public class GameScreen extends Screen implements Input {
     public static int blueJoystickCount = 0;
     int count = 0;
     public Pixmap backgroundPixmap = null;
-    public int bottomLeftPtr = -1;
-    public int bottomRightPtr = -1;
-    public int leftTrackPtr = -1;
-    public int rightTrackPtr = -1;
-    public int bottomLeftFlag = 0;
-    public int bottomRightFlag = 0;
-    public int leftTrackFlag = 0;
-    public int rightTrackFlag = 0;
     public int xTouchBottomLeft = 1225;
     public int yTouchBottomLeft = 2325;
     public int xTouchBottomRight = 3775;
     public int yTouchBottomRight = 2325;
-    public int xPrevBottomLeft = 850;        //Adjust these/////////////////////////
-    public int yPrevBottomLeft = 1950;
-    public int xPrevBottomRight = 3400;
-    public int yPrevBottomRight = 1950;
     public int yTrackLeft = 675;
-    public int yTrackPrevLeft = 300;
     public int yTrackRight = 675;
-    public int yTrackPrevRight = 300;
     public int yTrackLeftUp = 0;
     public int yTrackRightUp = 0;
-    public int touchUpCount = 0;
     public int renderCount = 1;
-    public int innerCount = 0;
     public int leftThumbOutOfCircle = 0;
     public int rightThumbOutOfCircle = 0;
     public static int delay = 50;
@@ -147,19 +111,19 @@ public class GameScreen extends Screen implements Input {
 
     private void updateRunning(List<TouchEvent> touchEvents, float deltaTime, Context context) {
         //updateRunning() contains controller code of our MVC scheme
+        //Here is where we draw to the canvas
         Graphics g = game.getGraphics();
         backgroundPixmap = Assets.excavatorTabletLandscapeBackground;
         if (count == 0) {
             g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
-            g.drawJoystick(redJoystick, 850, 1950);          //Bottom Left Joystick
-            g.drawJoystick(redJoystick, 3400, 1950);           //Bottom Right joystick
-            g.drawBlueJoystick(blueJoystick, 295, 425);              //Left track
-            g.drawBlueJoystick(blueJoystick, 4110, 425);             //Right track
-            g.drawText("50", 2800, 720);
+            g.drawJoystick(redJoystick, 850, 1950);            //Draw bottom Left Joystick
+            g.drawJoystick(redJoystick, 3400, 1950);           //Draw bottom Right joystick
+            g.drawBlueJoystick(blueJoystick, 295, 425);        //Draw left track
+            g.drawBlueJoystick(blueJoystick, 4110, 425);       //Draw right track
+            g.drawText("50", 2800, 720);                //Draw delay text
             g.drawText("%", 3200, 720);
         }
         int len = touchEvents.size();
-        //Check to see if paused
         for (int i = 0; i < len; i++) {
             TouchEvent event = touchEvents.get(i);
             mActivePointerId = event.pointer;
@@ -167,60 +131,61 @@ public class GameScreen extends Screen implements Input {
             Log.d("ADebugTag", "mActivePointerId: " + mActivePointerId);
             Log.d("ADebugTag", "event.x: " + event.x);
             Log.d("ADebugTag", "event.y: " + event.y);
-            if (event.type == TouchEvent.TOUCH_UP) {
-                if (event.x < 2500 && event.y > 1300) {
-                    xLeftUp = event.x - 1225;
+            if (event.type == TouchEvent.TOUCH_UP) {    //A thumb is lifted. The following code figures out in which region of the screen the thumb was lifted
+                if (event.x < 2500 && event.y > 1300) {     //Touch up is in the region of the bottom left joystick
+                    xLeftUp = event.x - 1225;       //Normalize the coordinates so (0,0) is in the middle
                     yLeftUp = 2325 - event.y;
-                    stopSendingLeft = 1;
+                    stopSendingLeft = 1;            //Flag so we know the thumb is lifted
+                    //Calculate the hypotenuse of where the thumb was lifted so we can make the joystick return to 0
                     leftUpHyp = ((int) Math.sqrt((xLeftUp * xLeftUp + yLeftUp * yLeftUp))) - 375;
+                    //Calculate the angle of where the thumb was lifted so we can make the joystick return to 0
                     leftUpAngle = Math.atan2((double) yLeftUp, (double) xLeftUp);
                 }
-                if (event.x >= 2500 && event.y > 1300) {
-                    stopSendingRight = 1;
-                    xRightUp = event.x - 3775;
+                if (event.x >= 2500 && event.y > 1300) {    //Touch up is in the region of the bottom right joystick
+                    xRightUp = event.x - 3775;       //Normalize the coordinates so (0,0) is in the middle
                     yRightUp = 2325 - event.y;
+                    stopSendingRight = 1;            //Flag so we know the thumb is lifted
+                    //Calculate the hypotenuse of where the thumb was lifted so we can make the joystick return to 0
                     rightUpHyp = ((int) Math.sqrt((xRightUp * xRightUp + yRightUp * yRightUp))) - 375;
+                    //Calculate the angle of where the thumb was lifted so we can make the joystick return to 0
                     rightUpAngle = Math.atan2((double) yRightUp, (double) xRightUp);
                 }
-                if (event.x < 1500 && event.y < 1300) {
-                    stopSendingLeftTrack = 1;
-                    yTrackLeftUp = 675 - event.y;
+                if (event.x < 1500 && event.y < 1300) {     //Touch up is in the region of the left track
+                    stopSendingLeftTrack = 1;       //Flag so we know the thumb is lifted
+                    yTrackLeftUp = 675 - event.y;   //Normalize the coordinates so (0,0) is in the middle
+                    if(yTrackLeftUp > 300){         //Keep -300 <= yTrackLeftUp <= 300
+                        yTrackLeftUp = 300;
+                    }
+                    else if(yTrackLeftUp < -300){
+                        yTrackLeftUp = -300;
+                    }
 
                 }
-                if (event.x > 4000 && event.y < 1300) {
-                    stopSendingRightTrack = 1;
-                    yTrackRightUp = 675 - event.y;
+                if (event.x > 4000 && event.y < 1300) {     //Touch up is in the region of the right track
+                    stopSendingRightTrack = 1;       //Flag so we know the thumb is lifted
+                    yTrackRightUp = 675 - event.y;   //Normalize the coordinates so (0,0) is in the middle
+                    if(yTrackRightUp > 300){         //Keep -300 <= yTrackRightUp <= 300
+                        yTrackRightUp = 300;
+                    }
+                    else if(yTrackRightUp < -300){
+                        yTrackRightUp = -300;
+                    }
                 }
-                if (event.x > 2300 && event.x < 2600 && event.y < 600) {
-                    delayUpCount = 0;
+                if (event.x > 2300 && event.x < 2600 && event.y < 600) {    //Delay up button
+                    delayUpCount = 0;       //Flag so we only increment the delay by 5 once per touch
                 }
-                if (event.x > 2300 && event.x < 2600 && event.y >= 600 && event.y < 1000) {
-                    delayDownCount = 0;
+                if (event.x > 2300 && event.x < 2600 && event.y >= 600 && event.y < 1000) {     //Delay down button
+                    delayDownCount = 0;     //Flag so we only decrement the delay by 5 once per touch
                 }
-                touchUpCount = 1;
             }
-            if (event.type == TouchEvent.TOUCH_DRAGGED || event.type == TouchEvent.TOUCH_DOWN) {
-                touchUpCount = 0;
+            if (event.type == TouchEvent.TOUCH_DRAGGED || event.type == TouchEvent.TOUCH_DOWN) {    //A thumb is pressed or dragging the screen
+                //The following code determines which region of the screen the thumb was pressed
                 count = 1;
                 xTouch1 = event.x;          //Get the x and y coordinates of the first touch
                 yTouch1 = event.y;
-                if (xTouch1 < 2500 && yTouch1 > 1300) {
-                    stopSendingLeft = 0;
-                }
-                if (xTouch1 >= 2500 && yTouch1 > 1300) {
-                    stopSendingRight = 0;
-                }
-                if (xTouch1 < 1500 && yTouch1 < 1300) {
-                    stopSendingLeftTrack = 0;
-                }
-                if (xTouch1 > 4000 && yTouch1 < 1300) {
-                    stopSendingRightTrack = 0;
-                }
-
-                if (event.x > 1100 && event.x < 2000 && event.y < 1200) {
+                if (event.x > 1100 && event.x < 2000 && event.y < 1200) {       //Back button
                     //Back Button Code Here
                     backgroundPixmap.dispose();
-                    // System.gc();
                     Intent intent2 = new Intent(context.getApplicationContext(), Excavator.class);
                     context.startActivity(intent2);
                     return;
@@ -230,300 +195,280 @@ public class GameScreen extends Screen implements Input {
                 if (xTouch1 < 2500 && yTouch1 > 1300) {
                     xTouchBottomLeft = xTouch1;
                     yTouchBottomLeft = yTouch1;
-                    xPrevBottomLeft = xTouchBottomLeft;
-                    yPrevBottomLeft = yTouchBottomLeft;
-                    bottomLeftFlag = 1;
-                    switch (mActivePointerId) {
-                        case 0:
-                            bottomLeftPtr = 0;
-                            break;
-                        case 1:
-                            bottomLeftPtr = 1;
-                            break;
-                        case 2:
-                            bottomLeftPtr = 2;
-                            break;
-                        case 3:
-                            bottomLeftPtr = 3;
-                            break;
-                    }
+                    stopSendingLeft = 0;    //Clear the touch up flag
                 }
                 //In the region of the boom and curl circle
                 else if (xTouch1 >= 2500 && yTouch1 > 1300) {
                     xTouchBottomRight = xTouch1;
                     yTouchBottomRight = yTouch1;
-                    xPrevBottomRight = xTouchBottomRight;
-                    yPrevBottomRight = yTouchBottomRight;
-                    bottomRightFlag = 1;
-                    switch (mActivePointerId) {
-                        case 0:
-                            bottomRightPtr = 0;
-                            break;
-                        case 1:
-                            bottomRightPtr = 1;
-                            break;
-                        case 2:
-                            bottomRightPtr = 2;
-                            break;
-                        case 3:
-                            bottomRightPtr = 3;
-                            break;
-                    }
+                    stopSendingRight = 0;   //Clear the touch up flag
                 }
                 //In the region of the left track slider
                 else if (xTouch1 <= 1000 && yTouch1 <= 1300) {
                     yTrackLeft = yTouch1;
-                    yTrackPrevLeft = yTrackLeft;
-                    leftTrackFlag = 1;
-                    switch (mActivePointerId) {
-                        case 0:
-                            leftTrackPtr = 0;
-                            break;
-                        case 1:
-                            leftTrackPtr = 1;
-                            break;
-                        case 2:
-                            leftTrackPtr = 2;
-                            break;
-                        case 3:
-                            leftTrackPtr = 3;
-                            break;
-                    }
+                    stopSendingLeftTrack = 0;   //Clear the touch up flag
                 }
                 //In the region of the right track slider
                 else if (xTouch1 >= 4000 && yTouch1 <= 1300) {
                     yTrackRight = yTouch1;
-                    yTrackPrevRight = yTrackRight;
-                    rightTrackFlag = 1;
-                    switch (mActivePointerId) {
-                        case 0:
-                            rightTrackPtr = 0;
-                            break;
-                        case 1:
-                            rightTrackPtr = 1;
-                            break;
-                        case 2:
-                            rightTrackPtr = 2;
-                            break;
-                        case 3:
-                            rightTrackPtr = 3;
-                            break;
-                    }
-                } else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 < 600) {
-                    if (delayUpCount == 0) {
-                        delay += 5;
+                    stopSendingRightTrack = 0;      //Clear the touch up flag
+                }
+                //In the region of the delay up button
+                else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 < 600) {
+                    if (delayUpCount == 0) {    //Flag so delay gets incremented by 5 once per touch
+                        delay += 5;         //Increment the delay by 5%
                         delayUpCount = 1;
                     }
                 } else if (xTouch1 > 2300 && xTouch1 < 2600 && yTouch1 >= 600 && yTouch1 < 1000) {
-                    if (delayDownCount == 0) {
-                        delay -= 5;
+                    if (delayDownCount == 0) {    //Flag so delay gets decremented by 5 once per touch
+                        delay -= 5;         //Decrement the delay by 5%
                         delayDownCount = 1;
                     }
                 }
-                if (delay > 100) {
+                if (delay > 100) {      //Delay maxes out at 100%
                     delay = 100;
                 } else if (delay < 0) {
-                    delay = 0;
+                    delay = 0;      //Min delay is 0%
                 }
             }
-            numAvg = 10;
-            xL = xTouchBottomLeft - 1225;
+            xL = xTouchBottomLeft - 1225;       //Normalize the x and y coordinates so (0,0) is in the middle of the circle
             yL = 2325 - yTouchBottomLeft;
-            if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) > 570) {
+            if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) > 570) {       //Thumb is outside of the circle
+                //The following code sets the new scaled x and scaled y so the joystick is maxed out at the edge of the circle
                 //Inverse tangent to find the angle
                 angleL = Math.atan2((double) yL, (double) xL);
                 //cos for x
-                scaledXL = (int) (570 * Math.cos(angleL));
+                scaledXL = (int) (570 * Math.cos(angleL));      //New scaled x-coordinate
                 //sin for y
-                scaledYL = (int) (570 * Math.sin(angleL));
-                leftHyp = 570;
-                leftThumbOutOfCircle = 1;
+                scaledYL = (int) (570 * Math.sin(angleL));      //New scaled y-coordinate
+                leftHyp = 570;      //We need the hypotenuse for then the thumb is lifted so the hypotenuse can shorten up
+                                    // as the joystick returns to the origin
+                leftThumbOutOfCircle = 1;       //Flag so we know to use the scaled x and y coordinates
                 if(stopSendingLeft == 0) {
-                    o = scaledXL;
-                    s = scaledYL;
+                    o = scaledXL;   //o for orbit, or rotate, is the value sent out over Bluetooth in the connected thread
+                    s = scaledYL;   //s for stick is the value sent out over Bluetooth in the connected thread
                 }
                 else{
-                    o = 0;
+                    o = 0;      //Thumb is lifted, send 0s for orbit and stick
                     s = 0;
                 }
-            } else if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) <= 570) {
-                //The thumb is within the circle. Draw the joystick at the thumb press
-                leftThumbOutOfCircle = 0;
-                leftHyp = (int) Math.sqrt(xL * xL + yL * yL);
-                angleL = Math.atan2((double) yL, (double) xL);
+            } else if (((int) Math.sqrt(Math.abs((xL * xL + yL * yL)))) <= 570) {   //Thumb is in the circle
+                leftThumbOutOfCircle = 0;       //Clear the flag
+                leftHyp = (int) Math.sqrt(xL * xL + yL * yL);      //We need the hypotenuse for then the thumb is lifted so the
+                                                                   // hypotenuse can shorten up as the joystick returns to the origin
+                angleL = Math.atan2((double) yL, (double) xL);     //We need the angle for drawing the joystick circles and for then the thumb is lifted so the hypotenuse
+                                                                   // can shorten up at the same angle as the joystick returns to the origin
                 if(stopSendingLeft == 0) {
-                    o = xL;
-                    s = yL;
+                    o = xL;   //o for orbit, or rotate, is the value sent out over Bluetooth in the connected thread
+                    s = yL;   //s for stick is the value sent out over Bluetooth in the connected thread
                 }
                 else{
-                    o = 0;
+                    o = 0;      //Thumb is lifted, send 0s for orbit and stick
                     s = 0;
                 }
+            }
+            if(o > -300 && o < 300){        //If o, the x-coordinate, is within 300 of the middle
+                stopSendingOrbit = 1;       //We only want to move the stick. "#"s are sent out in ConnectedThread to signal the firmware not to touch the rotate
+            }
+            else{
+                stopSendingOrbit = 0;       //If the absolute value of the touch is greater than 300, we want to rotate. Clear the flag
             }
             xR = xTouchBottomRight - 3775;
             yR = 2325 - yTouchBottomRight;
-            if (((int) Math.sqrt(Math.abs((xR * xR + yR * yR)))) > 570) {
+            if (((int) Math.sqrt(Math.abs((xR * xR + yR * yR)))) > 570) {       //Thumb is outside of the circle
+                //The following code sets the new scaled x and scaled y so the joystick is maxed out at the edge of the circle
                 //Inverse tangent to find the angle
                 angleR = Math.atan2((double) yR, (double) xR);
                 //cos for x
-                scaledXR = (int) (570 * Math.cos(angleR));
+                scaledXR = (int) (570 * Math.cos(angleR));      //New scaled x-coordinate
                 //sin for y
-                scaledYR = (int) (570 * Math.sin(angleR));
-                rightHyp = 570;
-                rightThumbOutOfCircle = 1;
+                scaledYR = (int) (570 * Math.sin(angleR));      //New scaled y-coordinate
+                rightHyp = 570;      //We need the hypotenuse for then the thumb is lifted so the
+                                     // hypotenuse can shorten up as the joystick returns to the origin
+                rightThumbOutOfCircle = 1;       //Flag so we know to use the scaled x and y coordinates
                 if(stopSendingRight == 0) {
-                    c = scaledXR;
-                    b = scaledYR;
+                    c = scaledXR;       //c for curl is the value sent out over Bluetooth in the connected thread
+                    b = scaledYR;       //b for boom is the value sent out over Bluetooth in the connected thread
                 }
-                else if(stopSendingRight == 1){
-                    c = 0;
+                else{
+                    c = 0;      //Thumb is lifted, send 0s for curl and boom
                     b = 0;
                 }
             }
             if ((((int) Math.sqrt(Math.abs((xR * xR + yR * yR))) <= 570))) {
                 //The thumb is within the circle. Draw the joystick at the thumb press
                 rightThumbOutOfCircle = 0;
-                rightHyp = (int) Math.sqrt(xR*xR + yR*yR);
-                angleR = Math.atan2((double) yR, (double) xR);
+                rightHyp = (int) Math.sqrt(xR*xR + yR*yR);      //We need the hypotenuse for then the thumb is lifted so the
+                                                                // hypotenuse can shorten up as the joystick returns to the origin
+                angleR = Math.atan2((double) yR, (double) xR);     //We need the angle for drawing the joystick circles and for then the thumb is lifted so the hypotenuse
+                                                                   // can shorten up at the same angle as the joystick returns to the origin
                 if(stopSendingRight == 0) {
-                    c = xR;
-                    b = yR;
+                    c = xR;       //c for curl is the value sent out over Bluetooth in the connected thread
+                    b = yR;       //b for boom is the value sent out over Bluetooth in the connected thread
                 }
-                else if(stopSendingRight == 1){
-                    c = 0;
+                else{
+                    c = 0;      //Thumb is lifted, send 0s for curl and boom
                     b = 0;
                 }
             }
         }
-        if (renderCount == 5) {
-            //if (touchUpCount == 0) {
-            g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);
-            //}
+        if (renderCount == 5) {     //We're only going to draw the background and joysticks every 5th frame
+            g.drawLandscapePixmap(excavatorTabletLandscapeBackground, 0, 0);    //Draw background
+            //If thumb is withing the gray circle
             if (leftThumbOutOfCircle == 0 && stopSendingLeft == 0) {
-                for (int k = 0; k <= leftHyp; k += 10) {
-                    xLeftSolidJoystick = (int) (k * Math.cos(angleL));
-                    yLeftSolidJoystick = (int) (k * Math.sin(angleL));
-                    g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);
+                for (int k = 0; k <= leftHyp; k += 10) {    //For loop draws red joysticks 10 pixels apart from the origin to the thumb press
+                    //Trigonometry which draws joysticks 10 pixels apart. The hypotenuse, k, keeps getting longer and we use cosine and sine of the angle of press times
+                    //k, the hypotenuse
+                    xLeftSolidJoystick = (int) (k * Math.cos(angleL));      //New x-coordinate to draw the joystick
+                    yLeftSolidJoystick = (int) (k * Math.sin(angleL));      //New y-coordinate to draw the joystick
+                    g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);   //Draw joystick
                 }
-                g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);
+                g.drawJoystick(redJoystick, xTouchBottomLeft - 375, yTouchBottomLeft - 375);    //Draw the joystick at the thumb press
 
-            } else if (leftThumbOutOfCircle == 1 && stopSendingLeft == 0) {
-                for (int k = 0; k <= leftHyp; k += 10) {
+            }
+            //If thumb is outside of the gray circle
+            else if (leftThumbOutOfCircle == 1 && stopSendingLeft == 0) {
+                for (int k = 0; k <= leftHyp; k += 10) {    //For loop draws red joysticks 10 pixels apart from the origin to the thumb press
+                    //Trigonometry which draws joysticks 10 pixels apart. The hypotenuse, k, keeps getting longer and we use cosine and sine of the angle of press times
+                    //k, the hypotenuse
                     xLeftSolidJoystick = (int) (k * Math.cos(angleL));
                     yLeftSolidJoystick = (int) (k * Math.sin(angleL));
                     g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);
                 }
+                //The thumb is out of the circle. Use the scaled values of x and y and show joystick at perimeter
                 g.drawJoystick(redJoystick, 850 + scaledXL, 1950 - scaledYL);
             }
+            //If thumb is withing the gray circle
             if (rightThumbOutOfCircle == 0 && stopSendingRight == 0) {
-                for (int k = 0; k <= rightHyp; k += 10) {
-                    xRightSolidJoystick = (int) (k * Math.cos(angleR));
-                    yRightSolidJoystick = (int) (k * Math.sin(angleR));
-                    g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);
+                for (int k = 0; k <= rightHyp; k += 10) {    //For loop draws red joysticks 10 pixels apart from the origin to the thumb press
+                    xRightSolidJoystick = (int) (k * Math.cos(angleR));      //New x-coordinate to draw the joystick
+                    yRightSolidJoystick = (int) (k * Math.sin(angleR));      //New y-coordinate to draw the joystick
+                    g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);   //Draw joystick
                 }
-                g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);
+                g.drawJoystick(redJoystick, xTouchBottomRight - 375, yTouchBottomRight - 375);    //Draw the joystick at the thumb press
 
-        } else if (rightThumbOutOfCircle == 1 && stopSendingRight == 0) {
-            for (int k = 0; k <= rightHyp; k += 10) {
-                xRightSolidJoystick = (int) (k * Math.cos(angleR));
-                yRightSolidJoystick = (int) (k * Math.sin(angleR));
-                g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);
             }
+            //If thumb is outside of the gray circle
+            else if (rightThumbOutOfCircle == 1 && stopSendingRight == 0) {
+            for (int k = 0; k <= rightHyp; k += 10) {    //For loop draws red joysticks 10 pixels apart from the origin to the thumb press
+                xRightSolidJoystick = (int) (k * Math.cos(angleR));      //New x-coordinate to draw the joystick
+                yRightSolidJoystick = (int) (k * Math.sin(angleR));      //New y-coordinate to draw the joystick
+                g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);    //Draw joystick
+            }
+            //The thumb is out of the circle. Use the scaled values of x and y and show joystick at perimeter
             g.drawJoystick(redJoystick, 3400 + scaledXR, 1950 - scaledYR);
         }
-        if(stopSendingLeftTrack == 1){
+        if(stopSendingLeftTrack == 1){      //Thumb is lifted, send 0's
             l = 0;
         }
-        else {
+        else {      //Thumb is pressed
+            //If the y-coordinates of the thumb press are between 400-1000, draw a blue joystick
             if (yTrackLeft > 400 && yTrackLeft < 1000 && stopSendingLeftTrack == 0) {
                 g.drawBlueJoystick(blueJoystick, 295, yTrackLeft - 250);
-                l = 700 - yTrackLeft;
-            } else if (yTrackLeft <= 400 && stopSendingLeftTrack == 0) {
+                l = 700 - yTrackLeft;   //Value l to be sent out in ConnectedThread is normalized so (0,0) is in the middle of the slider
+            }
+            //else if the y-coordinate of the thumb press is <= 400, draw a blue joystick maxed out at 300
+            else if (yTrackLeft <= 400 && stopSendingLeftTrack == 0) {
                 g.drawBlueJoystick(blueJoystick, 295, 150);  //y was 25
-                l = 300;
-            } else if (yTrackLeft >= 1000 && stopSendingLeftTrack == 0) {
-                g.drawBlueJoystick(blueJoystick, 295, 750);     //y was 625
-                l = -300;
+                l = 300;        //Value for left track sent out in ConnectedTread is maxed out at 300
+            }
+            //else if the y-coordinate of the thumb press is >= 1000, draw a blue joystick maxed out at -300
+            else if (yTrackLeft >= 1000 && stopSendingLeftTrack == 0) {
+                g.drawBlueJoystick(blueJoystick, 295, 750);
+                l = -300;       //Value for left track sent out in ConnectedTread is maxed out at -300
             }
         }
-        if(stopSendingRightTrack == 1){
+        if(stopSendingRightTrack == 1){      //Thumb is lifted, send 0's
             r = 0;
         }
-        else {
+        else {      //Thumb is pressed
+            //If the y-coordinates of the thumb press are between 400-1000, draw a blue joystick
             if (yTrackRight > 400 && yTrackRight < 1000 && stopSendingRightTrack == 0) {
                 g.drawBlueJoystick(blueJoystick, 4110, yTrackRight - 250);
-                r = 700 - yTrackRight;
-            } else if (yTrackRight <= 400 && stopSendingRightTrack == 0) {
+                r = 700 - yTrackRight;   //Value r to be sent out in ConnectedThread is normalized so (0,0) is in the middle of the slider
+            }
+            //else if the y-coordinate of the thumb press is <= 400, draw a blue joystick maxed out at 300
+            else if (yTrackRight <= 400 && stopSendingRightTrack == 0) {
                 g.drawBlueJoystick(blueJoystick, 4110, 150);
-                r = 300;
-            } else if (yTrackRight >= 1000 && stopSendingRightTrack == 0) {
+                r = 300;        //Value for right track sent out in ConnectedTread is maxed out at 300
+            }
+            //else if the y-coordinate of the thumb press is >= 1000, draw a blue joystick maxed out at -300
+            else if (yTrackRight >= 1000 && stopSendingRightTrack == 0) {
                 g.drawBlueJoystick(blueJoystick, 4110, 750);
-                r = -300;
+                r = -300;        //Value for right track sent out in ConnectedTread is maxed out at -300
             }
         }
-        if (stopSendingLeft == 1) {
+        if (stopSendingLeft == 1) {     //Bottom left joystick thumb is lifted
+            //Draw the joysticks slowly returning to zero. leftUpHyp is the hypotenuse of when the thumb left the screen
+            //leftUpAngle is the angle of when the thumb left the screen
+            //Every frame the hypotenuse is 60 pixels shorter. We calculate the new x and y-coordinates to draw a red joystick
             xLeftScaled = (int) (leftUpHyp * Math.cos(leftUpAngle));
             yLeftScaled = (int) (leftUpHyp * Math.sin(leftUpAngle));
+            //for loop draws red joysticks from the origin to leftUpHyp. leftUpHyp is decremented by 60 every loop
             for (int k = 0; k <= leftUpHyp; k += 10) {
-                xLeftSolidJoystick = (int) (k * Math.cos(leftUpAngle));
-                yLeftSolidJoystick = (int) (k * Math.sin(leftUpAngle));
-                g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);
+                xLeftSolidJoystick = (int) (k * Math.cos(leftUpAngle));     //New scaled x-coordinate to draw a red joystick
+                yLeftSolidJoystick = (int) (k * Math.sin(leftUpAngle));     //New scaled y-coordinate to draw a red joystick
+                g.drawJoystick(redJoystick, 850 + xLeftSolidJoystick, 1950 - yLeftSolidJoystick);       //Draw a red joystick
             }
-            g.drawJoystick(redJoystick, 850 + xLeftScaled, 1950 - yLeftScaled);
-            leftUpHyp -= 40;
+            g.drawJoystick(redJoystick, 850 + xLeftScaled, 1950 - yLeftScaled);     //Draw a red joystick
+            leftUpHyp -= 60;        //Decrement the hypotenuse as the trail of joysticks shortens up
             if (leftUpHyp < 0) {
                 leftUpHyp = 0;
             }
         }
-        if (stopSendingRight == 1) {
+        if (stopSendingRight == 1) {     //Bottom right joystick thumb is lifted
+            //Draw the joysticks slowly returning to zero. rightUpHyp is the hypotenuse of when the thumb left the screen
+            //rightUpAngle is the angle of when the thumb left the screen
+            //Every frame the hypotenuse is 60 pixels shorter. We calculate the new x and y-coordinates to draw a red joystick
             xRightScaled = (int) (rightUpHyp * Math.cos(rightUpAngle));
             yRightScaled = (int) (rightUpHyp * Math.sin(rightUpAngle));
+            //for loop draws red joysticks from the origin to rightUpHyp. rightUpHyp is decremented by 60 every loop
             for (int k = 0; k <= rightUpHyp; k += 10) {
-                xRightSolidJoystick = (int) (k * Math.cos(rightUpAngle));
-                yRightSolidJoystick = (int) (k * Math.sin(rightUpAngle));
+                xRightSolidJoystick = (int) (k * Math.cos(rightUpAngle));     //New scaled x-coordinate to draw a red joystick
+                yRightSolidJoystick = (int) (k * Math.sin(rightUpAngle));     //New scaled y-coordinate to draw a red joystick
                 g.drawJoystick(redJoystick, 3400 + xRightSolidJoystick, 1950 - yRightSolidJoystick);
             }
-            rightUpHyp -= 40;
+            rightUpHyp -= 60;        //Decrement the hypotenuse as the trail of joysticks shortens up
             g.drawJoystick(redJoystick, 3400 + xRightScaled, 1950 - yRightScaled);
             if (rightUpHyp < 0) {
                 rightUpHyp = 0;
             }
         }
-        if (stopSendingLeftTrack == 1) {
-            g.drawBlueJoystick(blueJoystick, 295, 425 - yTrackLeftUp);
-            if (yTrackLeftUp >= 0) {
-                yTrackLeftUp -= 30;
+        if (stopSendingLeftTrack == 1) {        //Thumb is lifted
+            //Every frame yTrackLeftUp gets shorter as the joystick slowly returns to 0
+            g.drawBlueJoystick(blueJoystick, 295, 425 - yTrackLeftUp);      //Draw blue joystick
+            if (yTrackLeftUp >= 0) {        //yTrackLeftUp is positive, decrement yTrackLeftUp to get to 0
+                yTrackLeftUp -= 50;
                 if (yTrackLeftUp < 0) {
                     yTrackLeftUp = 0;
                 }
-            } else {
-                yTrackLeftUp += 30;
+            } else {                        //yTrackLeft is negative, increment yTrackLeftUp to get to 0
+                yTrackLeftUp += 50;
                 if (yTrackLeftUp > 0) {
                     yTrackLeftUp = 0;
                 }
             }
         }
-        if (stopSendingRightTrack == 1) {
-            g.drawBlueJoystick(blueJoystick, 4110, 425 - yTrackRightUp);
-            if (yTrackRightUp >= 0) {
-                yTrackRightUp -= 30;
+        if (stopSendingRightTrack == 1) {       //Thumb is lifted
+            //Every frame yTrackRightUp gets shorter as the joystick slowly returns to 0
+            g.drawBlueJoystick(blueJoystick, 4110, 425 - yTrackRightUp);      //Draw blue joystick
+            if (yTrackRightUp >= 0) {        //yTrackRightUp is positive, decrement yTrackRightUp
+                yTrackRightUp -= 50;
                 if (yTrackRightUp < 0) {
                     yTrackRightUp = 0;
                 }
-            } else {
-                yTrackRightUp += 30;
+            } else {                        //yTrackRightUp is negative, increment yTrackRightUp
+                yTrackRightUp += 50;
                 if (yTrackRightUp > 0) {
                     yTrackRightUp = 0;
                 }
             }
         }
-        delayString = String.valueOf(delay);
-        g.drawRect(2750, 500, 600, 275, 0);
-        g.drawText(delayString, 2800, 720);
-        g.drawText("%", 3200, 720);
-        renderCount = 0;
-        //g.drawJoystick(redJoystick, 3500, 1950);           //3400, 1950
-
+        delayString = String.valueOf(delay);        //Convert the delay integer to a string
+        g.drawRect(2750, 500, 600, 275, 0);     //Draw a blank white box
+        g.drawText(delayString, 2800, 720);         //Draw the delay text
+        g.drawText("%", 3200, 720);          //Draw a %
+        renderCount = 0;                                  //We've reached the end of 5 frames, renderCount = 0
     }
 
     renderCount++;
